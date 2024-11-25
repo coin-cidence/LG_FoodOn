@@ -1,20 +1,67 @@
-<<<<<<< HEAD
-# lg_foodon_flutter
+# 냉장고 고내 정리 서비스_푸디온
+이미지
 
-A new Flutter project.
+- 배포 URL : 
+- Test ID : 
+- Test PW : 
 
-## Getting Started
+<br>
 
-This project is a starting point for a Flutter application.
+## 프로젝트 소개
 
-A few resources to get you started if this is your first Flutter project:
+- ㅇㅇㅇ
+- ㅇㅇㅇ
+- ㅇㅇㅇ
+- ㅇㅇㅇ
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+<br>
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
-# LG_FoodOn
->>>>>>> 2b16da5002bc5c0cbd0b6addc79ec8953a6c4cc4
+## 팀원 구성
+<br>
+
+## 1. 개발 환경
+
+<br>
+
+<br>
+
+## 2. 프로젝트 구조
+
+
+<br>
+
+## 3. 역할 분담
+
+### 도연우
+
+<br>
+    
+### 문현지
+
+<br>
+
+### 이상현
+
+<br>
+
+### 장수진
+
+<br>
+
+### 김나린
+
+<br>
+
+## 4. 프로젝트 기간
+
+<br>
+
+## 5. 페이지별 기능
+
+## 6. 트러블 슈팅
+
+<br>
+
+## 7. 개선 목표
+
+## 8. 프로젝트 후기
