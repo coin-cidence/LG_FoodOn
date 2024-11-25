@@ -182,7 +182,7 @@ class _FoodListPageState extends State<FoodListPage> {
           if (_isInfoVisible)
             InfoDialog(
               xPosition: MediaQuery.of(context).size.width / 2,
-              yPosition: 100, // Adjusted for testing
+              yPosition: 75, // Adjusted for testing
             ),
         ],
       ),
