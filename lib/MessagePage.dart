@@ -12,7 +12,7 @@ class _MessagePageState extends State<MessagePage> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('images/엘지배경.png'), // 이미지 경로
+            image: AssetImage('images/FTIE_엘지배경_대지.png'), // 이미지 경로
             fit: BoxFit.cover, // 이미지가 화면에 맞게 확장
           ),
         ),

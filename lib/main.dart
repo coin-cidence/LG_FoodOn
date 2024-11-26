@@ -18,11 +18,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue, // 기본 테마 색상
       ),
-      home: Scaffold(
-        body: MyCustomContainer(), // my_custom_container.dart의 MyCustomContainer 호출
-      // home: MessagePage(), // 초기 화면 설정
-      // home: FoodDetailPage(), // 초기 화면 설정
-      )
+        // home: MessagePage(), // 초기 화면 설정
+        home: FoodDetailPage(), // 초기 화면 설정
+      // home: Scaffold(
+        // body: MyCustomContainer(), // my_custom_container.dart의 MyCustomContainer 호출
+
+      // )
     );
   }
 }
