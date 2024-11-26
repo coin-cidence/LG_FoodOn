@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'new_screen.dart';  // 새 화면을 임포트
-import 'new_screen2.dart';  // 새 화면을 임포트
+import '../foodList.dart';  // 새 화면을 임포트
+import '../dummy_data.dart';
 
 class MyCustomContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+
+    // 더미 데이터 로드
+    final shelvesData = DummyData.getSmartShelvesData();
 
     return Container(
       width: screenWidth,
@@ -116,8 +120,11 @@ class MyCustomContainer extends StatelessWidget {
                 // 선반 1 클릭 시 다른 화면으로 전환
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => NewScreen2()), // 선반 1 클릭 시 새로운 화면으로 전환
-                );
+                  MaterialPageRoute(
+                    builder: (context) => FoodListPage(
+                      shelfSerial: shelvesData[0]['smartShelfSerial'], // 선반2 데이터 전달
+                    ),
+                  ),                );
               },
               child: SizedBox(
                 width: screenWidth * 0.087,
