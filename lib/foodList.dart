@@ -203,7 +203,6 @@ class _FoodListPageState extends State<FoodListPage> {
               ),
 
               // 리스트 영역
-              // 리스트 영역
               Divider(height: 1, color: Colors.grey), // 구분선
               Expanded(
                 flex: 4, // 하단 영역: 40% 높이
