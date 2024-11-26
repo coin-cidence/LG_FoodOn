@@ -21,7 +21,7 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:lsh_smartshelf_3/widgets/my_custom_container2.dart';
+import 'widgets/my_custom_container.dart';
 
 void main() {
   runApp(const MyApp());

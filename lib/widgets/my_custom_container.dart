@@ -55,7 +55,7 @@ class MyCustomContainer extends StatelessWidget {
                   // 화살표 아이콘
                   Container(
                     width: screenWidth * 0.12, // 아이콘 너비
-                    height: screenHeight * 0.057, // 아이콘 높이
+                    height: screenHeight * 0.017, // 아이콘 높이
                     child: Icon(
                       Icons.arrow_back,
                       color: Colors.black, // 아이콘 색상
@@ -435,12 +435,12 @@ class MyCustomContainer extends StatelessWidget {
           ),
           Positioned(
             left: screenWidth * 0.55,
-            top: screenHeight * 0.205,
+            top: screenHeight * 0.195,
             child: SizedBox(
               width: screenWidth * 0.16,
               height: screenHeight * 0.015,
               child: Text(
-                '55.08%',
+                '00.00%',
                 textAlign: TextAlign.right,
                 style: TextStyle(
                   color: Color(0xFFD6D6D6),
