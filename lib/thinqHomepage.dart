@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: ListTile(
                   leading: Image.asset(
-                    'image_home/plus.png', // 제품 추가를 위한 이미지 경로
+                    'images/image_home/plus.png', // 제품 추가를 위한 이미지 경로
                     width: 24, // 이미지 너비
                     height: 24, // 이미지 높이
                   ),
@@ -117,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     ListTile(
                       leading: Image.asset(
-                        'image_home/smart_routine.png', // 제품 추가를 위한 이미지 경로
+                        'images/image_home/smart_routine.png', // 제품 추가를 위한 이미지 경로
                         width: 24, // 이미지 너비
                         height: 24, // 이미지 높이
                       ),
@@ -139,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     ListTile(
                       leading: Image.asset(
-                        'image_home/connect_home.png', // 제품 추가를 위한 이미지 경로
+                        'images/image_home/connect_home.png', // 제품 추가를 위한 이미지 경로
                         width: 24, // 이미지 너비
                         height: 24, // 이미지 높이
                       ),
@@ -161,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     ListTile(
                       leading: Image.asset(
-                        'image_home/3d_home_view.png', // 제품 추가를 위한 이미지 경로
+                        'images/image_home/3d_home_view.png', // 제품 추가를 위한 이미지 경로
                         width: 24, // 이미지 너비
                         height: 24, // 이미지 높이
                       ),
@@ -192,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     ListTile(
                       leading: Image.asset(
-                        'image_home/plus.png', // 제품 추가를 위한 이미지 경로
+                        'images/image_home/plus.png', // 제품 추가를 위한 이미지 경로
                         width: 24, // 이미지 너비
                         height: 24, // 이미지 높이
                       ),
@@ -214,7 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     ListTile(
                       leading: Image.asset(
-                        'image_home/invite_member.png', // 제품 추가를 위한 이미지 경로
+                        'images/image_home/invite_member.png', // 제품 추가를 위한 이미지 경로
                         width: 24, // 이미지 너비
                         height: 24, // 이미지 높이
                       ),
@@ -236,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     ListTile(
                       leading: Image.asset(
-                        'image_home/add_home.png', // 제품 추가를 위한 이미지 경로
+                        'images/image_home/add_home.png', // 제품 추가를 위한 이미지 경로
                         width: 24, // 이미지 너비
                         height: 24, // 이미지 높이
                       ),
@@ -280,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(width: 8),
             Image.asset(
-              'image_home/arrow_down.png',
+              'images/image_home/arrow_down.png',
               width: 12,
               height: 12,
             ),
@@ -290,7 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: Image.asset(
-              'image_home/plus-sign.png',
+              'images/image_home/plus-sign.png',
               width: 21,
               height: 21,
             ),
@@ -298,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           IconButton(
             icon: Image.asset(
-              'image_home/bell.png',
+              'images/image_home/bell.png',
               width: 21,
               height: 21,
             ),
@@ -306,7 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           IconButton(
             icon: Image.asset(
-              'image_home/dots.png',
+              'images/image_home/dots.png',
               width: 21,
               height: 21,
             ),
@@ -320,7 +320,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('image_home/background_gradation.png'),
+            image: AssetImage('images/image_home/background_gradation.png'),
             fit: BoxFit.cover,
           ),
         ),
@@ -333,7 +333,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     SizedBox(height: 77),
                     Image.asset(
-                      'image_home/home_home.png',
+                      'images/image_home/home_home.png',
                       width: 73,
                       height: 73,
                       fit: BoxFit.cover,
@@ -391,7 +391,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Padding(
                                   padding: EdgeInsets.only(left: 6.0, right: 6.0),
                                   child: Image.asset(
-                                    'image_home/routine_door.png',
+                                    'images/image_home/routine_door.png',
                                     width: 24,
                                     height: 24,
                                   ),
@@ -442,7 +442,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Image.asset(
-                                            'image_home/fridge.png',
+                                            'images/image_home/fridge.png',
                                             width: 55,
                                             height: 55,
                                           ),
@@ -483,8 +483,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           },
                                           child: Image.asset(
                                             isPowerOn
-                                                ? 'image_home/power_on.png'
-                                                : 'image_home/power_off.png',
+                                                ? 'images/image_home/power_on.png'
+                                                : 'images/image_home/power_off.png',
                                             width: 35,
                                             height: 35,
                                           ),
@@ -511,7 +511,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: Padding(
                     padding: const EdgeInsets.only(top: 12.0, bottom: 8.0),
                     child: Image.asset(
-                      'image_home/home_button.png',
+                      'images/image_home/home_button.png',
                       width: 24,
                       height: 24,
                     ),
@@ -522,7 +522,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: Padding(
                     padding: const EdgeInsets.only(top: 12.0, bottom: 8.0),
                     child: Image.asset(
-                      'image_home/discover_button.png',
+                      'images/image_home/discover_button.png',
                       width: 24,
                       height: 24,
                     ),
@@ -533,7 +533,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: Padding(
                     padding: const EdgeInsets.only(top: 12.0, bottom: 8.0),
                     child: Image.asset(
-                      'image_home/report_button.png',
+                      'images/image_home/report_button.png',
                       width: 24,
                       height: 24,
                     ),
@@ -544,7 +544,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: Padding(
                     padding: const EdgeInsets.only(top: 12.0, bottom: 8.0),
                     child: Image.asset(
-                      'image_home/menu_button.png',
+                      'images/image_home/menu_button.png',
                       width: 24,
                       height: 24,
                     ),
