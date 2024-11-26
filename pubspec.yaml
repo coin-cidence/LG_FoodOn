@@ -6,6 +6,7 @@ version: 1.0.0+1
 
 environment:
   sdk: ^3.5.3
+  #sdk: '>=3.4.3 <4.0.0'
 
 dependencies:
   flutter:
@@ -23,7 +24,7 @@ flutter:
   uses-material-design: true
   assets:
    - images/image_home/
-   - images/FTIE_엘지배경_대지.png
+   - images/
 
   fonts:
     - family: LGText
