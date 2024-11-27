@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'widgets/my_custom_container.dart';
+import 'FoodDetailPage.dart'; // FoodDetailPage.dart 파일 import
+import 'MessagePage.dart';
+import 'thinqHomepage.dart';
+/*
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -11,10 +15,31 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false, // 디버그 배너 제거
+      title: 'Food Detail Page',
+      theme: ThemeData(
+        primarySwatch: Colors.blue, // 기본 테마 색상
+      ),
+        // home: MessagePage(), // 초기 화면 설정
+        // home: FoodDetailPage(), // 초기 화면 설정
       home: Scaffold(
         body: MyCustomContainer(), // my_custom_container.dart의 MyCustomContainer 호출
-      ),
+      )
+    );
+  }
+}
+*/
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: HomeScreen(),
     );
   }
 }
