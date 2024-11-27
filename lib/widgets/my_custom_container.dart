@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'new_screen.dart';  // 새 화면을 임포트
 import '../foodList.dart';  // 새 화면을 임포트
 import '../dummy_data.dart';
 
@@ -46,12 +45,10 @@ class MyCustomContainer extends StatelessWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text("이전 화면으로 넘어갑니다")),
                 );
-                // 화면 전환
+
+                // 화면 전환: 이전 페이지로 이동 현지 수정
                 Future.delayed(Duration(seconds: 1), () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => NewScreen()), // 새로운 화면으로 전환
-                  );
+                  Navigator.pop(context); // 이전 화면으로 이동
                 });
               },
               child: Row(
