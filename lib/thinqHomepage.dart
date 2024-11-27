@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'deviceCard.dart';
+import 'deviceSelectionPage.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -7,8 +7,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool isPowerOn = true;
+  bool isPowerOn = true; // 냉장고 전원 상태
+  List<Map<String, dynamic>> devices = []; // 디바이스 목록
 
+  // Bottom Sheet 표시
   // Bottom Sheet를 표시하는 함수
   void _showBottomSheet() {
     showModalBottomSheet(
@@ -87,6 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   onTap: () {
                     Navigator.pop(context);
+                    _navigateToDeviceSelectionPage();
                     // print("제품 추가 버튼 클릭됨");
                   },
                 ),
@@ -235,7 +238,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       onTap: () {
-                        Navigator.pop(context);
+                        Navigator.pop(context); // BottomSheet 닫기
+                        _navigateToDeviceSelectionPage(); // 디바이스 선택 페이지로 이동
                       },
                     ),
                   ],
@@ -246,6 +250,29 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  void _navigateToDeviceSelectionPage() async {
+    // DeviceSelectionPage에서 선택된 디바이스 이름을 가져옴
+    final selectedDevice = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DeviceSelectionPage()),
+    );
+
+    // 선택된 디바이스를 리스트에 추가
+    if (selectedDevice != null) {
+      // 예제 데이터로 스마트 선반 이미지와 이름을 추가
+      final Map<String, dynamic> deviceData = {
+        "name": selectedDevice,
+        "image": "images/image_home/smart_shelf.png", // 스마트 선반 이미지 경로
+        "isPowerOn": true, // 초기 전원 상태
+      };
+
+      // 상태 업데이트
+      setState(() {
+        devices.add(deviceData); // 리스트에 새로운 디바이스 추가
+      });
+    }
   }
 
   @override
@@ -261,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(
                 fontSize: 18,
                 fontFamily: 'LGText',
-                fontWeight: FontWeight.bold, // Bold 설정
+                fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(width: 8),
@@ -272,7 +299,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        centerTitle: false,
         actions: [
           IconButton(
             icon: Image.asset(
@@ -330,7 +356,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: TextStyle(
                         fontSize: 14,
                         fontFamily: 'LGText',
-                        fontWeight: FontWeight.w400, // Regular
+                        fontWeight: FontWeight.w400,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -341,7 +367,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         '설정하기',
                         style: TextStyle(
                           fontFamily: 'LGText',
-                          fontWeight: FontWeight.w400, // Regular
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -365,14 +391,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: TextStyle(
                               fontSize: 16,
                               fontFamily: 'LGText',
-                              fontWeight: FontWeight.bold, // Bold
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           SizedBox(height: 6),
                           ElevatedButton(
                             onPressed: () {},
                             child: Row(
-                              mainAxisSize: MainAxisSize.min, // 버튼 크기를 내용에 맞게 조정
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Padding(
                                   padding: EdgeInsets.only(left: 6.0, right: 6.0),
@@ -386,7 +412,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   '루틴 알아보기',
                                   style: TextStyle(
                                     fontFamily: 'LGText',
-                                    fontWeight: FontWeight.w400, // Regular
+                                    fontWeight: FontWeight.w400,
                                   ),
                                 ),
                               ],
@@ -407,16 +433,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: TextStyle(
                               fontSize: 16,
                               fontFamily: 'LGText',
-                              fontWeight: FontWeight.bold, // Bold
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           SizedBox(height: 6),
+                          // 거실에 냉장고 및 추가된 디바이스 표시
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween, // 간격 균등하게 조정
                             children: [
+                              // 냉장고 UI
                               Flexible(
                                 child: Container(
                                   width: MediaQuery.of(context).size.width * 0.45,
-                                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 16),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(10),
@@ -433,28 +462,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                             height: 55,
                                           ),
                                           SizedBox(height: 8),
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 8.0),
-                                            child: Text(
+                                          Text(
                                               '냉장고',
                                               style: TextStyle(
                                                 fontSize: 14,
                                                 fontFamily: 'LGText',
-                                                fontWeight: FontWeight.w400, // Regular
+                                                fontWeight: FontWeight.w400,
                                               ),
                                             ),
-                                          ),
                                           SizedBox(height: 1),
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 8.0),
-                                            child: Text(
+                                          Text(
                                               isPowerOn ? '켜짐' : '꺼짐',
                                               style: TextStyle(
                                                 fontSize: 14,
                                                 fontFamily: 'LGText',
-                                                fontWeight: FontWeight.w400, // Regular
+                                                fontWeight: FontWeight.w400,
                                               ),
-                                            ),
+                                            textAlign: TextAlign.left, // 텍스트 정렬 추가 (왼쪽 정렬)
                                           ),
                                         ],
                                       ),
@@ -480,8 +504,76 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                               ),
+                              // 추가된 디바이스 UI
+                              ...devices.map((device) {
+                                return Flexible(
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width * 0.45,
+                                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Image.asset(
+                                              device["image"] ?? '',
+                                              width: 55,
+                                              height: 55,
+                                            ),
+                                            SizedBox(height: 8),
+                                            Text(
+                                              device["name"] ?? '',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontFamily: 'LGText',
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                              textAlign: TextAlign.left, // 텍스트 정렬 추가 (왼쪽 정렬)
+                                            ),
+                                            SizedBox(height: 1),
+                                            Text(
+                                              (device["isPowerOn"] ?? true) ? '켜짐' : '꺼짐',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontFamily: 'LGText',
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                              textAlign: TextAlign.left, // 텍스트 정렬 추가 (왼쪽 정렬)
+                                            ),
+                                          ],
+                                        ),
+                                        Positioned(
+                                          top: 5,
+                                          right: 5,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                device["isPowerOn"] = !(device["isPowerOn"] ?? true); // 상태 변경
+                                              });
+                                            },
+                                            child: Image.asset(
+                                              (device["isPowerOn"] ?? true)
+                                                  ? 'images/image_home/power_on.png'
+                                                  : 'images/image_home/power_off.png', // 상태 기반 이미지
+                                              width: 35,
+                                              height: 35,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+
                             ],
                           ),
+
                         ],
                       ),
                     ),
@@ -540,7 +632,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
               unselectedLabelStyle: TextStyle(
                 fontFamily: 'LGText',
-                fontWeight: FontWeight.w400, // Regular for unselected text
+                fontWeight: FontWeight.w400,
                 fontSize: 12,
               ),
               selectedItemColor: Colors.black,
