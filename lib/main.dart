@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'widgets/my_custom_container.dart';
 import 'FoodDetailPage.dart'; // FoodDetailPage.dart 파일 import
 import 'MessagePage.dart';
+import 'thinqHomepage.dart';
+/*
 
 void main() {
   runApp(MyApp());
@@ -23,6 +25,21 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         body: MyCustomContainer(), // my_custom_container.dart의 MyCustomContainer 호출
       )
+    );
+  }
+}
+*/
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: HomeScreen(),
     );
   }
 }
