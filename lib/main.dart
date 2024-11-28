@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'FoodDetailPage.dart'; // FoodDetailPage.dart 파일 import
-import 'MessagePage.dart';
 import 'thinqHomepage.dart';
 
 void main() {
@@ -13,8 +11,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: HomeScreen(),
-      // home: MessagePage(), // 초기 화면 설정
-      // home: FoodDetailPage(), // 초기 화면 설정
     );
   }
 }
