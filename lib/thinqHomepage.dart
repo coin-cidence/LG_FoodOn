@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lg_foodon_flutter/MessagePage.dart';
 // import 'deviceCard.dart';
 
 void main() {
@@ -21,6 +22,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<Map<String, dynamic>> messages = [];
   bool isPowerOn = true;
 
   // Bottom Sheet를 표시하는 함수
@@ -302,7 +304,14 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 21,
               height: 21,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MessagePage(messages: messages),
+                ),
+              );
+            },
           ),
           IconButton(
             icon: Image.asset(
