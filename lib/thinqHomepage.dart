@@ -1,20 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lg_foodon_flutter/MessagePage.dart';
-// import 'deviceCard.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
-    );
-  }
-}
+import 'deviceSelectionPage.dart';
+import 'MessagePage.dart';
+import 'widgets/my_custom_container.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -22,9 +9,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool isPowerOn = true; // 냉장고 전원 상태
+  List<Map<String, dynamic>> devices = []; // 디바이스 목록
   List<Map<String, dynamic>> messages = [];
-  bool isPowerOn = true;
 
+  // Bottom Sheet 표시
   // Bottom Sheet를 표시하는 함수
   void _showBottomSheet() {
     showModalBottomSheet(
@@ -103,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   onTap: () {
                     Navigator.pop(context);
+                    _navigateToDeviceSelectionPage();
                     // print("제품 추가 버튼 클릭됨");
                   },
                 ),
@@ -251,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       onTap: () {
-                        Navigator.pop(context);
+                        Navigator.pop(context); // BottomSheet 닫기
                       },
                     ),
                   ],
@@ -262,6 +252,32 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  void _navigateToDeviceSelectionPage() async {
+    // DeviceSelectionPage에서 반환되는 데이터를 가져옴
+    final Map<String, dynamic>? selectedDevice = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DeviceSelectionPage()),
+    );
+
+    // 반환된 데이터가 null이 아닌 경우 처리
+    if (selectedDevice != null) {
+      // 반환된 데이터가 Map<String, dynamic> 타입인지 확인
+      if (selectedDevice is Map<String, dynamic>) {
+        // 예상 데이터 형식에 맞게 처리
+        setState(() {
+          devices.add({
+            "name": selectedDevice['name'], // 선택된 이름
+            "image": selectedDevice['image'], // 선택된 이미지
+            "isPowerOn": true, // 초기 전원 상태
+          });
+        });
+      } else {
+        // 예상과 다른 데이터 타입이 반환된 경우 로그 출력
+        print("Unexpected data type received: $selectedDevice");
+      }
+    }
   }
 
   @override
@@ -277,7 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(
                 fontSize: 18,
                 fontFamily: 'LGText',
-                fontWeight: FontWeight.bold, // Bold 설정
+                fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(width: 8),
@@ -288,7 +304,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        centerTitle: false,
         actions: [
           IconButton(
             icon: Image.asset(
@@ -351,9 +366,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       '홈 위치를 설정하면 맞춤 정보와 기능을 사용할 수 있어요.',
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 15,
                         fontFamily: 'LGText',
-                        fontWeight: FontWeight.w400, // Regular
+                        fontWeight: FontWeight.w400,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -363,8 +378,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Text(
                         '설정하기',
                         style: TextStyle(
+                          fontSize: 15,
                           fontFamily: 'LGText',
-                          fontWeight: FontWeight.w400, // Regular
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -388,19 +404,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: TextStyle(
                               fontSize: 16,
                               fontFamily: 'LGText',
-                              fontWeight: FontWeight.bold, // Bold
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           SizedBox(height: 6),
                           ElevatedButton(
                             onPressed: () {},
                             child: Row(
-                              mainAxisSize: MainAxisSize.min, // 버튼 크기를 내용에 맞게 조정
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Padding(
                                   padding: EdgeInsets.only(left: 6.0, right: 6.0),
                                   child: Image.asset(
-                                    'images/image_home/routine_door.png',
+                                    'images/image_home/문.png',
                                     width: 24,
                                     height: 24,
                                   ),
@@ -408,8 +424,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Text(
                                   '루틴 알아보기',
                                   style: TextStyle(
+                                    fontSize: 15,
                                     fontFamily: 'LGText',
-                                    fontWeight: FontWeight.w400, // Regular
+                                    fontWeight: FontWeight.w400,
                                   ),
                                 ),
                               ],
@@ -430,16 +447,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: TextStyle(
                               fontSize: 16,
                               fontFamily: 'LGText',
-                              fontWeight: FontWeight.bold, // Bold
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           SizedBox(height: 6),
+                          // 거실에 냉장고 및 추가된 디바이스 표시
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween, // 간격 균등하게 조정
                             children: [
+                              // 냉장고 UI
                               Flexible(
                                 child: Container(
                                   width: MediaQuery.of(context).size.width * 0.45,
-                                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 16),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(10),
@@ -451,33 +471,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Image.asset(
-                                            'images/image_home/fridge.png',
+                                            'images/product_image/냉장고.png',
                                             width: 55,
                                             height: 55,
                                           ),
                                           SizedBox(height: 8),
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 8.0),
-                                            child: Text(
-                                              '냉장고',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontFamily: 'LGText',
-                                                fontWeight: FontWeight.w400, // Regular
-                                              ),
+                                          Text(
+                                            '냉장고',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontFamily: 'LGText',
+                                              fontWeight: FontWeight.w400,
                                             ),
                                           ),
                                           SizedBox(height: 1),
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 8.0),
-                                            child: Text(
-                                              isPowerOn ? '켜짐' : '꺼짐',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontFamily: 'LGText',
-                                                fontWeight: FontWeight.w400, // Regular
-                                              ),
+                                          Text(
+                                            isPowerOn ? '켜짐' : '꺼짐',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily: 'LGText',
+                                              fontWeight: FontWeight.w400,
                                             ),
+                                            textAlign: TextAlign.left, // 텍스트 정렬 추가 (왼쪽 정렬)
                                           ),
                                         ],
                                       ),
@@ -503,8 +518,87 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                               ),
+                              // 추가된 디바이스 UI
+                              ...devices.map((device) {
+                                return Flexible(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      // my_custom_container.dart 호출 현지 수정
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => MyCustomContainer(),
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width * 0.45,
+                                      padding: EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Stack(
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Image.asset(
+                                                device["image"] ?? '',
+                                                width: 55,
+                                                height: 55,
+                                              ),
+                                              SizedBox(height: 8),
+                                              Text(
+                                                device["name"] ?? '',
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontFamily: 'LGText',
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                                textAlign: TextAlign.left, // 텍스트 정렬 추가 (왼쪽 정렬)
+                                              ),
+                                              SizedBox(height: 1),
+                                              Text(
+                                                (device["isPowerOn"] ?? true) ? '켜짐' : '꺼짐',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: 'LGText',
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                                textAlign: TextAlign.left, // 텍스트 정렬 추가 (왼쪽 정렬)
+                                              ),
+                                            ],
+                                          ),
+                                          Positioned(
+                                            top: 5,
+                                            right: 5,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  device["isPowerOn"] = !(device["isPowerOn"] ?? true); // 상태 변경
+                                                });
+                                              },
+                                              child: Image.asset(
+                                                (device["isPowerOn"] ?? true)
+                                                    ? 'images/image_home/power_on.png'
+                                                    : 'images/image_home/power_off.png', // 상태 기반 이미지
+                                                width: 35,
+                                                height: 35,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+
                             ],
                           ),
+
                         ],
                       ),
                     ),
@@ -563,7 +657,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
               unselectedLabelStyle: TextStyle(
                 fontFamily: 'LGText',
-                fontWeight: FontWeight.w400, // Regular for unselected text
+                fontWeight: FontWeight.w400,
                 fontSize: 12,
               ),
               selectedItemColor: Colors.black,
