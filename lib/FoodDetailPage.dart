@@ -6,14 +6,14 @@ class FoodDetailPage extends StatefulWidget {
 }
 
 class _FoodDetailPageState extends State<FoodDetailPage> {
-  String shelfName = "선반 1";
+  String shelfLocation = "선반 1";
   String foodName = "가지"; // 식품 이름
-  DateTime? registeredDate = DateTime(2024, 11, 19);
-  int storageDays = 5;
-  TextEditingController expiryDateController = TextEditingController();
+  DateTime foodRegisterDate = DateTime(2024, 11, 20);
+  int storageDays = 0;
+  TextEditingController foodExpirationDate = TextEditingController();
   bool isExpiryToggle = false;
   bool isNotificationToggle = true;
-  String selectedNotificationOption = "1주일";
+  String foodUnusedNotifPeriod = "1주일";
 
   bool isEditing = false; // 편집 모드 상태
 
@@ -32,8 +32,17 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   @override
   void initState() {
     super.initState();
-    notificationMessage = "$selectedNotificationOption 이상 사용하지 않으면 알림을 받아요.";
-    expiryDateController.text = ""; // 초기 유통기한 텍스트는 빈 값
+    notificationMessage = "$foodUnusedNotifPeriod 이상 사용하지 않으면 알림을 받아요.";
+    foodExpirationDate.text = ""; // 초기 유통기한 텍스트는 빈 값
+    calculateStorageDays(); // 보관일수 계산
+  }
+
+
+  void calculateStorageDays() {
+    DateTime currentDate = DateTime.now(); // 현재 날짜
+    setState(() {
+      storageDays = currentDate.difference(foodRegisterDate).inDays; // 날짜 차이를 계산하여 저장
+    });
   }
 
   // 날짜 입력 포맷
@@ -43,11 +52,11 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     if (filteredValue.length <= 8) {
       final formattedValue = _formatExpiryDate(filteredValue);
       setState(() {
-        expiryDateController.text = formattedValue;
+        foodExpirationDate.text = formattedValue;
       });
 
-      int cursorPosition = expiryDateController.selection.base.offset;
-      expiryDateController.selection =
+      int cursorPosition = foodExpirationDate.selection.base.offset;
+      foodExpirationDate.selection =
           TextSelection.fromPosition(TextPosition(offset: cursorPosition));
 
       if (formattedValue.length == 10) {
@@ -56,7 +65,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         });
       }
     } else {
-      expiryDateController.text = expiryDateController.text.substring(0, 10);
+      foodExpirationDate.text = foodExpirationDate.text.substring(0, 10);
     }
   }
 
@@ -97,7 +106,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
 
   @override
   void dispose() {
-    expiryDateController.dispose();
+    foodExpirationDate.dispose();
     super.dispose();
   }
 
@@ -113,7 +122,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
             Navigator.pop(context);
           },
         ),
-        title: Text(shelfName, style: TextStyle(fontSize: 18),),
+        title: Text(shelfLocation, style: TextStyle(fontSize: 18),),
         titleSpacing: 0,  // title과 leading 아이콘 사이의 기본 공백을 제거합니다.
       ),
       body: Padding(
@@ -164,9 +173,9 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
             SizedBox(height: 20),
             _buildBoxWithWidget(
               "등록일",
-              Text(registeredDate != null
-                  ? "${registeredDate!.year}년 ${registeredDate!
-                  .month}월 ${registeredDate!.day}일"
+              Text(foodRegisterDate != null
+                  ? "${foodRegisterDate!.year}년 ${foodRegisterDate!
+                  .month}월 ${foodRegisterDate!.day}일"
                   : "YYYY-MM-DD", style: TextStyle(fontSize: 16)),
 
             ),
@@ -181,7 +190,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                   Container(
                     width: 130, // 텍스트 필드의 너비를 줄임
                     child: TextField(style: TextStyle(fontSize: 16),
-                      controller: expiryDateController,
+                      controller: foodExpirationDate,
                       decoration: InputDecoration(
                         hintText: "YYYY-MM-DD",
                         border: isEditing
@@ -219,15 +228,15 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                 children: [
                   Expanded(
                     child: DropdownButton<String>(
-                      value: selectedNotificationOption,
+                      value: foodUnusedNotifPeriod,
                       style: TextStyle(fontSize: 16),
                       onChanged: isEditing
                           ? (String? newValue) {
                         setState(() {
-                          selectedNotificationOption = newValue!;
+                          foodUnusedNotifPeriod = newValue!;
                           //문자열 보간을 통해 안내 문구 설정
                           notificationMessage =
-                              "$selectedNotificationOption 이상 사용하지 않으면 알림을 받아요.";
+                              "$foodUnusedNotifPeriod 이상 사용하지 않으면 알림을 받아요.";
                         });
                       }
                           : null, // 편집 모드일 때만 활성화
