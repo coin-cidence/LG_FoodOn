@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "924152680758",
+    "project_id": "smart-shelf-db",
+    "storage_bucket": "smart-shelf-db.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:924152680758:android:474bdf0aa46658f869a397",
+        "android_client_info": {
+          "package_name": "com.example.lg.foodon.flutter.ft"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAg-ZS5-tnmJ_2a8BpsxeID67ilMN_vKZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:924152680758:android:201b1bc2eb8ea00f69a397",
+        "android_client_info": {
+          "package_name": "com.example.lg_foodon_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAg-ZS5-tnmJ_2a8BpsxeID67ilMN_vKZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
