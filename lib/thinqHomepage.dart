@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'deviceSelectionPage.dart';
+import 'MessagePage.dart';
 import 'widgets/my_custom_container.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -10,6 +11,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool isPowerOn = true; // 냉장고 전원 상태
   List<Map<String, dynamic>> devices = []; // 디바이스 목록
+  List<Map<String, dynamic>> messages = [];
 
   // Bottom Sheet 표시
   // Bottom Sheet를 표시하는 함수
@@ -317,7 +319,14 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 21,
               height: 21,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MessagePage(messages: messages),
+                ),
+              );
+            },
           ),
           IconButton(
             icon: Image.asset(
