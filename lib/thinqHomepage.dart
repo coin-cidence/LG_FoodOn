@@ -1,19 +1,6 @@
 import 'package:flutter/material.dart';
 import 'deviceSelectionPage.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
-    );
-  }
-}
+import 'widgets/my_custom_container.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -525,65 +512,76 @@ class _HomeScreenState extends State<HomeScreen> {
                               // 추가된 디바이스 UI
                               ...devices.map((device) {
                                 return Flexible(
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width * 0.45,
-                                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Image.asset(
-                                              device["image"] ?? '',
-                                              width: 55,
-                                              height: 55,
-                                            ),
-                                            SizedBox(height: 8),
-                                            Text(
-                                              device["name"] ?? '',
-                                              style: TextStyle(
-                                                fontSize: 15,
-                                                fontFamily: 'LGText',
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                              textAlign: TextAlign.left, // 텍스트 정렬 추가 (왼쪽 정렬)
-                                            ),
-                                            SizedBox(height: 1),
-                                            Text(
-                                              (device["isPowerOn"] ?? true) ? '켜짐' : '꺼짐',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontFamily: 'LGText',
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                              textAlign: TextAlign.left, // 텍스트 정렬 추가 (왼쪽 정렬)
-                                            ),
-                                          ],
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      // my_custom_container.dart 호출 현지 수정
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => MyCustomContainer(),
                                         ),
-                                        Positioned(
-                                          top: 5,
-                                          right: 5,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                device["isPowerOn"] = !(device["isPowerOn"] ?? true); // 상태 변경
-                                              });
-                                            },
-                                            child: Image.asset(
-                                              (device["isPowerOn"] ?? true)
-                                                  ? 'images/image_home/power_on.png'
-                                                  : 'images/image_home/power_off.png', // 상태 기반 이미지
-                                              width: 35,
-                                              height: 35,
+                                      );
+                                    },
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width * 0.45,
+                                      padding: EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Stack(
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Image.asset(
+                                                device["image"] ?? '',
+                                                width: 55,
+                                                height: 55,
+                                              ),
+                                              SizedBox(height: 8),
+                                              Text(
+                                                device["name"] ?? '',
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontFamily: 'LGText',
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                                textAlign: TextAlign.left, // 텍스트 정렬 추가 (왼쪽 정렬)
+                                              ),
+                                              SizedBox(height: 1),
+                                              Text(
+                                                (device["isPowerOn"] ?? true) ? '켜짐' : '꺼짐',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: 'LGText',
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                                textAlign: TextAlign.left, // 텍스트 정렬 추가 (왼쪽 정렬)
+                                              ),
+                                            ],
+                                          ),
+                                          Positioned(
+                                            top: 5,
+                                            right: 5,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  device["isPowerOn"] = !(device["isPowerOn"] ?? true); // 상태 변경
+                                                });
+                                              },
+                                              child: Image.asset(
+                                                (device["isPowerOn"] ?? true)
+                                                    ? 'images/image_home/power_on.png'
+                                                    : 'images/image_home/power_off.png', // 상태 기반 이미지
+                                                width: 35,
+                                                height: 35,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );
