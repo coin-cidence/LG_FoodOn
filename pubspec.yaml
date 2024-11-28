@@ -25,6 +25,7 @@ flutter:
   uses-material-design: true
   assets:
    - images/image_home/
+   - images/product_image/
    - images/
 
   fonts:

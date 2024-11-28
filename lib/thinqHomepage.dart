@@ -240,7 +240,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       onTap: () {
                         Navigator.pop(context); // BottomSheet 닫기
-                        _navigateToDeviceSelectionPage(); // 디바이스 선택 페이지로 이동
                       },
                     ),
                   ],
@@ -254,25 +253,28 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _navigateToDeviceSelectionPage() async {
-    // DeviceSelectionPage에서 선택된 디바이스 이름을 가져옴
-    final selectedDevice = await Navigator.push(
+    // DeviceSelectionPage에서 반환되는 데이터를 가져옴
+    final Map<String, dynamic>? selectedDevice = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => DeviceSelectionPage()),
     );
 
-    // 선택된 디바이스를 리스트에 추가
+    // 반환된 데이터가 null이 아닌 경우 처리
     if (selectedDevice != null) {
-      // 예제 데이터로 스마트 선반 이미지와 이름을 추가
-      final Map<String, dynamic> deviceData = {
-        "name": selectedDevice,
-        "image": "images/image_home/smart_shelf.png", // 스마트 선반 이미지 경로
-        "isPowerOn": true, // 초기 전원 상태
-      };
-
-      // 상태 업데이트
-      setState(() {
-        devices.add(deviceData); // 리스트에 새로운 디바이스 추가
-      });
+      // 반환된 데이터가 Map<String, dynamic> 타입인지 확인
+      if (selectedDevice is Map<String, dynamic>) {
+        // 예상 데이터 형식에 맞게 처리
+        setState(() {
+          devices.add({
+            "name": selectedDevice['name'], // 선택된 이름
+            "image": selectedDevice['image'], // 선택된 이미지
+            "isPowerOn": true, // 초기 전원 상태
+          });
+        });
+      } else {
+        // 예상과 다른 데이터 타입이 반환된 경우 로그 출력
+        print("Unexpected data type received: $selectedDevice");
+      }
     }
   }
 
@@ -355,7 +357,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       '홈 위치를 설정하면 맞춤 정보와 기능을 사용할 수 있어요.',
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 15,
                         fontFamily: 'LGText',
                         fontWeight: FontWeight.w400,
                       ),
@@ -367,6 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Text(
                         '설정하기',
                         style: TextStyle(
+                          fontSize: 15,
                           fontFamily: 'LGText',
                           fontWeight: FontWeight.w400,
                         ),
@@ -404,7 +407,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Padding(
                                   padding: EdgeInsets.only(left: 6.0, right: 6.0),
                                   child: Image.asset(
-                                    'images/image_home/routine_door.png',
+                                    'images/image_home/문.png',
                                     width: 24,
                                     height: 24,
                                   ),
@@ -412,6 +415,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Text(
                                   '루틴 알아보기',
                                   style: TextStyle(
+                                    fontSize: 15,
                                     fontFamily: 'LGText',
                                     fontWeight: FontWeight.w400,
                                   ),
@@ -458,27 +462,27 @@ class _HomeScreenState extends State<HomeScreen> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Image.asset(
-                                            'images/image_home/fridge.png',
+                                            'images/product_image/냉장고.png',
                                             width: 55,
                                             height: 55,
                                           ),
                                           SizedBox(height: 8),
                                           Text(
-                                              '냉장고',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontFamily: 'LGText',
-                                                fontWeight: FontWeight.w400,
-                                              ),
+                                            '냉장고',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontFamily: 'LGText',
+                                              fontWeight: FontWeight.w400,
                                             ),
+                                          ),
                                           SizedBox(height: 1),
                                           Text(
-                                              isPowerOn ? '켜짐' : '꺼짐',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontFamily: 'LGText',
-                                                fontWeight: FontWeight.w400,
-                                              ),
+                                            isPowerOn ? '켜짐' : '꺼짐',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily: 'LGText',
+                                              fontWeight: FontWeight.w400,
+                                            ),
                                             textAlign: TextAlign.left, // 텍스트 정렬 추가 (왼쪽 정렬)
                                           ),
                                         ],
@@ -540,7 +544,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               Text(
                                                 device["name"] ?? '',
                                                 style: TextStyle(
-                                                  fontSize: 14,
+                                                  fontSize: 15,
                                                   fontFamily: 'LGText',
                                                   fontWeight: FontWeight.w400,
                                                 ),
@@ -579,7 +583,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ],
                                       ),
                                     ),
-                                  )
+                                  ),
                                 );
                               }).toList(),
 
