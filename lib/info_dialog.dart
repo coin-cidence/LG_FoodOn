@@ -126,7 +126,7 @@ class InfoDialog extends StatelessWidget {
                     width: 20,
                     height: 20,
                     decoration: BoxDecoration(
-                      color: Colors.orange[300],
+                      color: Color(0xFFFFA68B),
                       shape: BoxShape.rectangle,
                       borderRadius: BorderRadius.circular(5),
                     ),
