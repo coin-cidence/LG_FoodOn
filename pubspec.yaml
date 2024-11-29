@@ -35,6 +35,7 @@ flutter:
    - images/image_home/
    - images/product_image/
    - images/
+   - images/icons/
 
   fonts:
     - family: LGText
