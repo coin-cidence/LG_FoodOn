@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'deviceSelectionPage.dart';
+import 'MessagePage.dart';
 import 'widgets/my_custom_container.dart';
-import 'MessagePage.dart'; // 프로젝트 경로에 맞게 수정
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -11,6 +11,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool isPowerOn = true; // 냉장고 전원 상태
   List<Map<String, dynamic>> devices = []; // 디바이스 목록
+  List<Map<String, dynamic>> messages = [];
 
   // Bottom Sheet 표시
   // Bottom Sheet를 표시하는 함수
@@ -312,7 +313,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             onPressed: _showBottomSheet,
           ),
-          SizedBox(width: 10),
           IconButton(
             icon: Image.asset(
               'images/image_home/bell.png',
@@ -320,16 +320,14 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 21,
             ),
             onPressed: () {
-              // MessagePage로 이동
               Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MessagePage(), // MessagePage 호출
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MessagePage(messages: messages),
                 ),
               );
             },
           ),
-          SizedBox(width: 4),
           IconButton(
             icon: Image.asset(
               'images/image_home/dots.png',
@@ -388,7 +386,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF23778F),
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 0),
+                        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 0),
                         minimumSize: Size(80, 35),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
