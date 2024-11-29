@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gradient_animation_text/flutter_gradient_animation_text.dart';
 import '../foodList.dart';  // 새 화면을 임포트
 import '../dummy_data.dart';
+import 'package:avatar_glow/avatar_glow.dart';
 
 
 class InnerShadowContainer extends StatelessWidget {
@@ -105,7 +106,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
           child: Text(
             label,
             style: TextStyle(
-              color: index == 0 ? Color(0xFF1EBAFB) : Color(0xFF9C9C9C), // 선반 1은 색상 변경
+              color: index == 0 ? Color(0xFF6BD5FF) : Colors.white, // 선반 1은 색상 변경
               fontSize: 14,
               fontFamily: 'LGText',
               fontWeight: index == 0 ? FontWeight.bold : FontWeight.w400, // 선반 1은 bold 처리
@@ -134,7 +135,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
               height: screenHeight,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('images/엘지배경_대지 1 2.png'),
+                  image: AssetImage('images/66.png'),
                   fit: BoxFit.cover, // 이미지가 컨테이너를 덮도록 설정
                 ),
               ),
@@ -167,7 +168,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                     height: screenHeight * 0.023, // 아이콘 높이
                     child: Icon(
                       Icons.arrow_back,
-                      color: Colors.black, // 아이콘 색상
+                      color: Colors.white, // 아이콘 색상
                       size: screenWidth * 0.06, // 아이콘 크기
                     ),
                   ),
@@ -175,15 +176,16 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                   // "스마트 선반" 텍스트
                   SizedBox(
                     width: screenWidth * 0.25,
-                    height: screenHeight * 0.023,
+                    height: screenHeight * 0.03,
                     child: Text(
                       '스마트 선반',
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.white,
                         fontSize: 20,
                         fontFamily: 'LGText',  // 정확한 폰트 이름 'LGText'
                         fontWeight: FontWeight.w700,  // Bold 스타일
-                        height: 1.2,  // 텍스트 줄 간격
+                        height: 1.4,
+                        decoration: TextDecoration.none,// 텍스트 줄 간격
                       ),
                     ),
                   ),
@@ -195,7 +197,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
 
           Positioned(
             left: screenWidth * 0.14,
-            top: screenHeight * 0.91,
+            top: screenHeight * 0.93,
             child: SizedBox(
               width: screenWidth * 0.72,
               height: screenHeight * 0.045,
@@ -211,10 +213,10 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                   ),
                 ),
                 colors: [
-                  Colors.grey, // violet
-                  Colors.black54,
+                  Colors.black54, // violet
                   Colors.black12,
                   Colors.black26,
+                  Colors.black87,
                 ],
                 duration: Duration(seconds: 3),
               ),
@@ -230,14 +232,18 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
 
 
           Positioned(
-            left: screenWidth * 0.18,
-            top: screenHeight * 0.14,
+            left: screenWidth * 0.182,
+            top: screenHeight * 0.135,
             child: Container(
               width: screenWidth * 0.63,
-              height: screenHeight * 0.73,
+              height: screenHeight * 0.74,
               decoration: BoxDecoration(
                 color: Colors.white, // 흰색 배경
+                border: Border.all(
+                  color: Color(0xFF838383), // 테두리 색상 (검정)
+                  width: 3, // 테두리 두께
                 // border: Border.all(width: 1), // 테두리
+                ),
                 borderRadius: BorderRadius.circular(8), // 둥근 모서리
               ),
             ),
@@ -252,8 +258,8 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                 // 그림자 효과를 위한 CustomPaint
                 CustomPaint(
                   painter: InnerShadowPainter(
-                    shadowColor: Color(0xFFD5E9EE),  // 그림자 색상
-                    containerColor: Color(0xFFE0EFF6),  // 컨테이너 배경색
+                    shadowColor: Color(0xFFCFCFCF),  // 그림자 색상
+                    containerColor: Color(0xFFCFCFCF),  // 컨테이너 배경색
                   ),
                   size: Size(screenWidth * 0.54, screenHeight * 0.26),
                 ),
@@ -262,7 +268,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                   width: screenWidth * 0.54,
                   height: screenHeight * 0.26,
                   decoration: ShapeDecoration(
-                    color: Color(0xFFE0EFF6),
+                    color: Color(0xFFCFCFCF),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -281,7 +287,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
               width: screenWidth * 0.54,
               height: screenHeight * 0.41,
               decoration: ShapeDecoration(
-                color: Color(0xFFE0EFF6),
+                color: Color(0xFFCFCFCF),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -403,9 +409,9 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                     width: screenWidth * 0.46,
                     height: screenHeight * 0.045,
                     decoration: ShapeDecoration(
-                      color: Color(0xFFF3F3F3),
+                      color: Color(0xFFC6C6C6),
                       shape: RoundedRectangleBorder(
-                        side: BorderSide(width: 1, color: Color(0xFFBFBFBF)),
+                        side: BorderSide(width: 1, color: Colors.grey),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -413,12 +419,12 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                 ),
                 Positioned(
                   left: 0.19,
-                  top: screenHeight * 0.036,
+                  top: screenHeight * 0.037,
                   child: Container(
                     width: screenWidth * 0.46,
                     height: screenHeight * 0.008,
                     decoration: ShapeDecoration(
-                      color: Color(0xFFBFBFBF),
+                      color: Colors.grey,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
                     ),
                   ),
@@ -543,9 +549,9 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                         width: screenWidth * 0.46,
                         height: screenHeight * 0.072,
                         decoration: ShapeDecoration(
-                          color: Color(0xFFF3F3F3),
+                          color: Color(0xFFC6C6C6),
                           shape: RoundedRectangleBorder(
-                            side: BorderSide(width: 1, color: Color(0xFFBFBFBF)),
+                            side: BorderSide(width: 1, color: Colors.grey),
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -558,7 +564,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                         width: screenWidth * 0.46,
                         height: screenHeight * 0.008,
                         decoration: ShapeDecoration(
-                          color: Color(0xFFBFBFBF),
+                          color: Colors.grey,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
                         ),
                       ),
@@ -568,6 +574,8 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
               ),
             ),
           ),
+
+
 
 
           Positioned(
@@ -680,9 +688,9 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                         width: screenWidth * 0.46,
                         height: screenHeight * 0.071,
                         decoration: ShapeDecoration(
-                          color: Color(0xFFF3F3F3),
+                          color: Color(0xFFC6C6C6),
                           shape: RoundedRectangleBorder(
-                            side: BorderSide(width: 1, color: Color(0xFFBFBFBF)),
+                            side: BorderSide(width: 1, color: Colors.grey),
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -690,12 +698,12 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                     ),
                     Positioned(
                       left: 0.19,
-                      top: screenHeight * 0.064,
+                      top: screenHeight * 0.066,
                       child: Container(
                         width: screenWidth * 0.46,
                         height: screenHeight * 0.008,
                         decoration: ShapeDecoration(
-                          color: Color(0xFFBFBFBF),
+                          color: Colors.grey,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
                         ),
                       ),
@@ -707,58 +715,151 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
           ),
 
 
-          Positioned(
-            left: screenWidth * 0.27,
-            top: screenHeight * 0.181,
-            child: GestureDetector(
-              onTap: () {
-                // 선반 1 클릭 시 다른 화면으로 전환
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FoodListPage(
-                      shelfSerial: shelvesData[0]['smartShelfSerial'], // 선반 1 데이터 전달
+          Stack(
+            children: [
+              // Glow 효과를 컨테이너 뒤쪽에 배치
+              Positioned(
+                left: screenWidth * 0.208, // 기존 컨테이너의 위치 유지
+                top: screenHeight * 0.094, // 기존 컨테이너의 위치 유지
+                child: AvatarGlow(
+                  startDelay: const Duration(milliseconds: 1000), // Glow 시작 딜레이
+                  glowColor: Colors.blue, // Glow 색상
+                  endRadius: screenWidth * 0.29, // Glow 효과 반경
+                  duration: const Duration(milliseconds: 2000), // Glow 지속 시간
+                  repeat: true, // 반복 여부
+                  showTwoGlows: true, // 두 겹의 Glow
+                  child: SizedBox(
+                    width: screenWidth * 0.2, // Glow 효과의 기준 크기 (컨테이너 크기와 동일)
+                    height: screenHeight * 0.006,
+                  ),
+                ),
+              ),
+
+              // 기존 컨테이너에 버튼 기능 추가
+              Positioned(
+                left: screenWidth * 0.27, // 기존 컨테이너의 위치 유지
+                top: screenHeight * 0.181, // 기존 컨테이너의 위치 유지
+                child: GestureDetector(
+                  onTap: () {
+                    // 선반 1 클릭 시 다른 화면으로 전환
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FoodListPage(
+                          shelfSerial: shelvesData[0]['smartShelfSerial'], // 선반 1 데이터 전달
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: screenWidth * 0.46, // 기존 컨테이너 크기
+                    height: screenHeight * 0.096, // 기존 컨테이너 크기
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Color(0xFF1EBAFB), width: 1), // 테두리
+                      borderRadius: BorderRadius.circular(2), // 테두리 반경
+                      color: Colors.white, // 컨테이너 배경색
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          left: 0,
+                          top: 0,
+                          child: Container(
+                            width: screenWidth * 0.46,
+                            height: screenHeight * 0.1,
+                            decoration: ShapeDecoration(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(width: 1, color: Color(0xFF1EBAFB)),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          left: 0.19,
+                          top: screenHeight * 0.088,
+                          child: Container(
+                            width: screenWidth * 0.46,
+                            height: screenHeight * 0.008,
+                            decoration: ShapeDecoration(
+                              color: Color(0xFF1EBAFB),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                );
-              },
-              child: Container(
-                width: screenWidth * 0.46,
-                height: screenHeight * 0.096,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      left: 0,
-                      top: 0,
-                      child: Container(
-                        width: screenWidth * 0.46,
-                        height: screenHeight * 0.1,
-                        decoration: ShapeDecoration(
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(width: 1, color: Color(0xFF1EBAFB)),
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      left: 0.19,
-                      top: screenHeight * 0.088,
-                      child: Container(
-                        width: screenWidth * 0.46,
-                        height: screenHeight * 0.008,
-                        decoration: ShapeDecoration(
-                          color: Color(0xFF1EBAFB),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ),
-            ),
+            ],
           ),
+
+
+
+
+
+
+
+
+
+
+
+          // Positioned(
+          //   left: screenWidth * 0.27,
+          //   top: screenHeight * 0.181,
+          //   child: GestureDetector(
+          //     onTap: () {
+          //       // 선반 1 클릭 시 다른 화면으로 전환
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(
+          //           builder: (context) => FoodListPage(
+          //             shelfSerial: shelvesData[0]['smartShelfSerial'], // 선반 1 데이터 전달
+          //           ),
+          //         ),
+          //       );
+          //     },
+          //     child: Container(
+          //       width: screenWidth * 0.46,
+          //       height: screenHeight * 0.096,
+          //       child: Stack(
+          //         children: [
+          //           Positioned(
+          //             left: 0,
+          //             top: 0,
+          //             child: Container(
+          //               width: screenWidth * 0.46,
+          //               height: screenHeight * 0.1,
+          //               decoration: ShapeDecoration(
+          //                 color: Colors.white,
+          //                 shape: RoundedRectangleBorder(
+          //                   side: BorderSide(width: 1, color: Color(0xFF1EBAFB)),
+          //                   borderRadius: BorderRadius.circular(2),
+          //                 ),
+          //               ),
+          //             ),
+          //           ),
+          //           Positioned(
+          //             left: 0.19,
+          //             top: screenHeight * 0.088,
+          //             child: Container(
+          //               width: screenWidth * 0.46,
+          //               height: screenHeight * 0.008,
+          //               decoration: ShapeDecoration(
+          //                 color: Color(0xFF1EBAFB),
+          //                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          //               ),
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
 
 
           Positioned(
@@ -820,7 +921,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                 '냉장고 1',
                 textAlign: TextAlign.right,
                 style: TextStyle(
-                  color: Colors.black.withOpacity(0.30),
+                  color: Colors.white.withOpacity(0.30),
                   fontSize: 16,
                   fontFamily: 'LGText', // 폰트 이름 확인
                   fontWeight: FontWeight.w400,
@@ -854,8 +955,6 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
           ),
 
 
-
-
           Positioned(
             left: 0,
             top: screenHeight * 0.974,
@@ -866,70 +965,3 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
     );
   }
 }
-
-
-////
-
-
-// class InnerShadowContainer extends StatelessWidget {
-//   final double width;
-//   final double height;
-//   final Color shadowColor;
-//   final Color containerColor;
-//
-//   InnerShadowContainer({
-//     required this.width,
-//     required this.height,
-//     required this.shadowColor,
-//     required this.containerColor,
-//   });
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return CustomPaint(
-//       painter: InnerShadowPainter(
-//         shadowColor: shadowColor,
-//         containerColor: containerColor,
-//       ),
-//       size: Size(width, height),
-//     );
-//   }
-// }
-//
-// class InnerShadowPainter extends CustomPainter {
-//   final Color shadowColor;
-//   final Color containerColor;
-//
-//   InnerShadowPainter({
-//     required this.shadowColor,
-//     required this.containerColor,
-//   });
-//
-//   @override
-//   void paint(Canvas canvas, Size size) {
-//     final Paint paint = Paint()
-//       ..color = containerColor
-//       ..style = PaintingStyle.fill;
-//
-//     // 컨테이너 색상 그리기
-//     canvas.drawRRect(
-//       RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, size.width, size.height), Radius.circular(8)),
-//       paint,
-//     );
-//
-//     // 그림자 효과 추가
-//     final shadowPaint = Paint()
-//       ..color = shadowColor.withOpacity(0.4)  // 그림자 투명도 조정
-//       ..maskFilter = MaskFilter.blur(BlurStyle.normal, 8);  // 블러 효과
-//
-//     canvas.drawRRect(
-//       RRect.fromRectAndRadius(Rect.fromLTWH(2, 2, size.width - 4, size.height - 4), Radius.circular(8)),
-//       shadowPaint,
-//     );
-//   }
-//
-//   @override
-//   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-//     return false;
-//   }
-// }
