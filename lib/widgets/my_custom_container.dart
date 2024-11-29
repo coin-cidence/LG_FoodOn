@@ -1,81 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gradient_animation_text/flutter_gradient_animation_text.dart';
 import '../foodList.dart';  // 새 화면을 임포트
-import '../dummy_data.dart';
+import '../firestore_service.dart'; // FirestoreService 임포트
 import 'package:avatar_glow/avatar_glow.dart';
-
-
-class InnerShadowContainer extends StatelessWidget {
-  final double width;
-  final double height;
-  final Color shadowColor;
-  final Color containerColor;
-
-  InnerShadowContainer({
-    required this.width,
-    required this.height,
-    required this.shadowColor,
-    required this.containerColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: InnerShadowPainter(
-        shadowColor: shadowColor,
-        containerColor: containerColor,
-      ),
-      size: Size(width, height),
-    );
-  }
-}
-
-class InnerShadowPainter extends CustomPainter {
-  final Color shadowColor;
-  final Color containerColor;
-
-  InnerShadowPainter({
-    required this.shadowColor,
-    required this.containerColor,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..color = containerColor
-      ..style = PaintingStyle.fill;
-
-    // 컨테이너 색상 그리기
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, size.width, size.height), Radius.circular(8)),
-      paint,
-    );
-
-    // 그림자 효과 추가
-    final shadowPaint = Paint()
-      ..color = shadowColor.withOpacity(0.4)  // 그림자 투명도 조정
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 8);  // 블러 효과
-
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromLTWH(2, 2, size.width - 4, size.height - 4), Radius.circular(8)),
-      shadowPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
-  }
-}
-
-
-
-class MyCustomContainer extends StatefulWidget {  // StatefulWidget으로 변경
+class MyCustomContainer extends StatefulWidget {
   @override
   _MyCustomContainerState createState() => _MyCustomContainerState();
 }
 
 class _MyCustomContainerState extends State<MyCustomContainer> {
+  final FirestoreService _firestoreService = FirestoreService();
+  String? shelfSerial;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchShelfSerial(); // Firestore에서 데이터 가져오기
+  }
+
+  Future<void> _fetchShelfSerial() async {
+    try {
+      // Firestore에서 모든 SMART_SHELF 데이터를 가져오기
+      final shelves = await _firestoreService.fetchSmartShelvesData("6879ZASD123456");
+
+      // "smart_shelf_serial" 값이 "SSS123456"과 일치하는 항목 찾기
+      final matchingShelf = shelves.firstWhere(
+            (shelf) => shelf['ShelfSerial'] == "SSS123456",
+      );
+
+      setState(() {
+        shelfSerial = matchingShelf?['ShelfSerial']; // 매칭된 ShelfSerial 설정 또는 null
+      });
+
+      if (shelfSerial == null) {
+        // 데이터가 없을 경우 사용자에게 알림
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("선반 데이터를 찾을 수 없습니다.")),
+        );
+      } else {
+        print("가져온 ShelfSerial: $shelfSerial");
+      }
+    } catch (e) {
+      print("Error fetching shelf data: $e");
+      setState(() {
+        shelfSerial = null; // 에러 발생 시 null로 설정
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("선반 데이터를 로드하는 중 오류가 발생했습니다.")),
+      );
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -86,14 +61,6 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-
-    // 더미 데이터 로드
-    final shelvesData = DummyData.getSmartShelvesData();
-
-
-
-
-
 
     // 선반 버튼을 생성하는 함수 (클릭 기능을 없앰)
     Widget createShelfButton(double left, double top, String label, int index) {
@@ -119,7 +86,6 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
       );
     }
 
-
     return Container(
       width: screenWidth,
       height: screenHeight,
@@ -141,7 +107,6 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
               ),
             ),
           ),
-
 
           // 스마트 선반 텍스트, 그리고 화살표 부분
           Positioned(
@@ -194,7 +159,6 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
             ),
           ),
 
-
           Positioned(
             left: screenWidth * 0.14,
             top: screenHeight * 0.92,
@@ -230,7 +194,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
           createShelfButton(screenWidth * 0.83, screenHeight * 0.38, '선반 3',2),
           createShelfButton(screenWidth * 0.83, screenHeight * 0.465, '선반 4',3),
 
-
+          // 냉장고 흰선반
           Positioned(
             left: screenWidth * 0.182,
             top: screenHeight * 0.135,
@@ -249,7 +213,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
             ),
           ),
 
-
+          // 냉동실
           Positioned(
             left: screenWidth * 0.23,
             top: screenHeight * 0.59,
@@ -278,8 +242,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
             ),
           ),
 
-
-
+          // 냉장실
           Positioned(
             left: screenWidth * 0.23,
             top: screenHeight * 0.163,
@@ -299,146 +262,165 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
 
           // 새로운 AlertDialog 식 -> 닫기, 확인 선택지 부여함
 
-      Positioned(
-        left: screenWidth * 0.27,
-        top: screenHeight * 0.286,
-        child: GestureDetector(
-          onTap: () {
-            // 무조건 AlertDialog 표시
-            showDialog(
-              context: context,
-              barrierDismissible: true, // 다이얼로그 외부 클릭 시 다이얼로그 닫기 가능
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  backgroundColor: Colors.white,  // 배경색을 하얀색으로 설정
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),  // 모서리를 둥글게 만드는 부분
-                  ),
-                  title: Padding(
-                    padding: const EdgeInsets.only(top: 30.0),  // 이모티콘을 아래로 내리기
-                    child: Center(  // 중앙 정렬을 위한 Center 위젯 사용
-                      child: Image.asset(
-                        'images/thinking.png',  // thinking.png 이미지 로드
-                        height: 50,  // 이미지 크기 조정
+
+
+          // 선반 2
+          Positioned(
+            left: screenWidth * 0.27,
+            top: screenHeight * 0.286,
+            child: GestureDetector(
+              onTap: () {
+                // 무조건 AlertDialog 표시
+                showDialog(
+                  context: context,
+                  barrierDismissible: true, // 다이얼로그 외부 클릭 시 다이얼로그 닫기 가능
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      backgroundColor: Colors.white,  // 배경색을 하얀색으로 설정
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),  // 모서리를 둥글게 만드는 부분
                       ),
-                    ),
-                  ),
-                  content: Container(
-                    width: 180,  // AlertDialog 크기 설정 (너비)
-                    height: 50,  // AlertDialog 크기 설정 (높이)
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 27.0),  // 텍스트를 아래로 내리기
-                      child: Center(
-                        child: Text(
-                          '등록된 식품이 없습니다!',
-                          textAlign: TextAlign.center,  // 텍스트 중앙 정렬
-                          style: TextStyle(
-                            fontFamily: 'LGText',  // 폰트 설정
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,  // 텍스트 굵게 설정
-                            color: Colors.black,  // 텍스트 색상을 검정색으로 설정
+                      title: Padding(
+                        padding: const EdgeInsets.only(top: 30.0),  // 이모티콘을 아래로 내리기
+                        child: Center(  // 중앙 정렬을 위한 Center 위젯 사용
+                          child: Image.asset(
+                            'images/thinking.png',  // thinking.png 이미지 로드
+                            height: 50,  // 이미지 크기 조정
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  actions: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,  // 버튼 중앙 정렬
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 1.0),  // 버튼 간격을 아래로 조정
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();  // AlertDialog 닫기
-                            },
+                      content: Container(
+                        width: 180,  // AlertDialog 크기 설정 (너비)
+                        height: 50,  // AlertDialog 크기 설정 (높이)
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 27.0),  // 텍스트를 아래로 내리기
+                          child: Center(
                             child: Text(
-                              '닫기',
+                              '등록된 식품이 없습니다!',
+                              textAlign: TextAlign.center,  // 텍스트 중앙 정렬
                               style: TextStyle(
-                                fontFamily: 'LGText',  // 폰트 지정
-                                fontSize: 16,           // 폰트 크기 (필요에 맞게 수정)
-                                fontWeight: FontWeight.w500,  // 폰트 굵기 (필요에 맞게 수정)
-                                color: Colors.black87,  // 버튼 텍스트 색상을 검정색으로 설정
+                                fontFamily: 'LGText',  // 폰트 설정
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,  // 텍스트 굵게 설정
+                                color: Colors.black,  // 텍스트 색상을 검정색으로 설정
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(width: 50),  // 버튼 간격 조정
-                        Padding(
-                          padding: const EdgeInsets.only(top: 1.0),  // 버튼 간격을 아래로 조정
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();  // AlertDialog 닫기
-                              // 화면 전환
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => FoodListPage(
-                                    shelfSerial: shelvesData[1]['smartShelfSerial'],
+                      ),
+                      actions: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,  // 버튼 중앙 정렬
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 1.0),  // 버튼 간격을 아래로 조정
+                              child: TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();  // AlertDialog 닫기
+                                },
+                                child: Text(
+                                  '닫기',
+                                  style: TextStyle(
+                                    fontFamily: 'LGText',  // 폰트 지정
+                                    fontSize: 16,           // 폰트 크기 (필요에 맞게 수정)
+                                    fontWeight: FontWeight.w500,  // 폰트 굵기 (필요에 맞게 수정)
+                                    color: Colors.black87,  // 버튼 텍스트 색상을 검정색으로 설정
                                   ),
                                 ),
-                              );
-                            },
-                            child: Text(
-                              '이동',
-                              style: TextStyle(
-                                fontFamily: 'LGText',  // 폰트 지정
-                                fontSize: 16,           // 폰트 크기 (필요에 맞게 수정)
-                                fontWeight: FontWeight.w500,  // 폰트 굵기 (필요에 맞게 수정)
-                                color: Colors.grey,  // 버튼 텍스트 색상을 검정색으로 설정
                               ),
                             ),
-                          ),
+                            SizedBox(width: 50),  // 버튼 간격 조정
+                            Padding(
+                              padding: const EdgeInsets.only(top: 1.0),  // 버튼 간격을 아래로 조정
+                              /*child: TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();  // AlertDialog 닫기
+                                  // 화면 전환
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => FoodListPage(
+                                        shelfSerial: shelvesData[1]['smartShelfSerial'],
+                                      ),
+                                    ),
+                                  );
+                                },*/
+                              child: GestureDetector(
+                                onTap: () {
+                                  print('선택된 선반 Serial: $shelfSerial'); // 값 출력
+                                  if (shelfSerial != null) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => FoodListPage(
+                                          shelfSerial: shelfSerial!, // Firestore 데이터 사용
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    print("선반 Serial 값이 비어있습니다."); // 디버깅용
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text("선반 데이터를 불러오는 중입니다.")),
+                                    );
+                                  }
+                                },
+                                child: Text(
+                                  '이동',
+                                  style: TextStyle(
+                                    fontFamily: 'LGText',  // 폰트 지정
+                                    fontSize: 16,           // 폰트 크기 (필요에 맞게 수정)
+                                    fontWeight: FontWeight.w500,  // 폰트 굵기 (필요에 맞게 수정)
+                                    color: Colors.grey,  // 버튼 텍스트 색상을 검정색으로 설정
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
-                    ),
-                  ],
+                    );
+                  },
                 );
               },
-            );
-          },
-          child: Container(
-            width: screenWidth * 0.46,
-            height: screenHeight * 0.045,
-            child: Stack(
-              children: [
-                Positioned(
-                  left: 0,
-                  top: 0,
-                  child: Container(
-                    width: screenWidth * 0.46,
-                    height: screenHeight * 0.045,
-                    decoration: ShapeDecoration(
-                      color: Color(0xFFC6C6C6),
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(width: 1, color: Colors.grey),
-                        borderRadius: BorderRadius.circular(2),
+              child: Container(
+                width: screenWidth * 0.46,
+                height: screenHeight * 0.045,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      child: Container(
+                        width: screenWidth * 0.46,
+                        height: screenHeight * 0.045,
+                        decoration: ShapeDecoration(
+                          color: Color(0xFFC6C6C6),
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(width: 1, color: Colors.grey),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                Positioned(
-                  left: 0.19,
-                  top: screenHeight * 0.037,
-                  child: Container(
-                    width: screenWidth * 0.46,
-                    height: screenHeight * 0.008,
-                    decoration: ShapeDecoration(
-                      color: Colors.grey,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                    Positioned(
+                      left: 0.19,
+                      top: screenHeight * 0.037,
+                      child: Container(
+                        width: screenWidth * 0.46,
+                        height: screenHeight * 0.008,
+                        decoration: ShapeDecoration(
+                          color: Colors.grey,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
 
-
-
-
-
+          // 선반 3
           Positioned(
             left: screenWidth * 0.27,
             top: screenHeight * 0.345,
@@ -506,18 +488,22 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                             SizedBox(width: 50),  // 버튼 간격 조정
                             Padding(
                               padding: const EdgeInsets.only(top: 1.0),  // 버튼 간격을 아래로 조정
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();  // AlertDialog 닫기
-                                  // 화면 전환
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => FoodListPage(
-                                        shelfSerial: shelvesData[2]['smartShelfSerial'],
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (shelfSerial != null) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => FoodListPage(
+                                          shelfSerial: shelfSerial!, // Firestore 데이터 사용
+                                        ),
                                       ),
-                                    ),
-                                  );
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text("선반 데이터를 불러오는 중입니다.")),
+                                    );
+                                  }
                                 },
                                 child: Text(
                                   '이동',
@@ -575,9 +561,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
             ),
           ),
 
-
-
-
+          // 선반 4
           Positioned(
             left: screenWidth * 0.27,
             top: screenHeight * 0.43,
@@ -645,18 +629,22 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                             SizedBox(width: 50),  // 버튼 간격 조정
                             Padding(
                               padding: const EdgeInsets.only(top: 1.0),  // 버튼 간격을 아래로 조정
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();  // AlertDialog 닫기
-                                  // 화면 전환
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => FoodListPage(
-                                        shelfSerial: shelvesData[3]['smartShelfSerial'],
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (shelfSerial != null) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => FoodListPage(
+                                          shelfSerial: shelfSerial!, // Firestore 데이터 사용
+                                        ),
                                       ),
-                                    ),
-                                  );
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text("선반 데이터를 불러오는 중입니다.")),
+                                    );
+                                  }
                                 },
                                 child: Text(
                                   '이동',
@@ -714,7 +702,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
             ),
           ),
 
-
+          // 선반 1
           Stack(
             children: [
               // Glow 효과를 컨테이너 뒤쪽에 배치
@@ -741,15 +729,22 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                 top: screenHeight * 0.181, // 기존 컨테이너의 위치 유지
                 child: GestureDetector(
                   onTap: () {
-                    // 선반 1 클릭 시 다른 화면으로 전환
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FoodListPage(
-                          shelfSerial: shelvesData[0]['smartShelfSerial'], // 선반 1 데이터 전달
+                    print('선택된 선반 Serial: $shelfSerial'); // 값 출력
+                    if (shelfSerial != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FoodListPage(
+                            shelfSerial: shelfSerial!, // Firestore 데이터 사용
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    } else {
+                      print("선반 Serial 값이 비어있습니다."); // 디버깅용
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("선반 데이터를 불러오는 중입니다.")),
+                      );
+                    }
                   },
                   child: Container(
                     width: screenWidth * 0.46, // 기존 컨테이너 크기
@@ -798,70 +793,6 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
             ],
           ),
 
-
-
-
-
-
-
-
-
-
-
-          // Positioned(
-          //   left: screenWidth * 0.27,
-          //   top: screenHeight * 0.181,
-          //   child: GestureDetector(
-          //     onTap: () {
-          //       // 선반 1 클릭 시 다른 화면으로 전환
-          //       Navigator.push(
-          //         context,
-          //         MaterialPageRoute(
-          //           builder: (context) => FoodListPage(
-          //             shelfSerial: shelvesData[0]['smartShelfSerial'], // 선반 1 데이터 전달
-          //           ),
-          //         ),
-          //       );
-          //     },
-          //     child: Container(
-          //       width: screenWidth * 0.46,
-          //       height: screenHeight * 0.096,
-          //       child: Stack(
-          //         children: [
-          //           Positioned(
-          //             left: 0,
-          //             top: 0,
-          //             child: Container(
-          //               width: screenWidth * 0.46,
-          //               height: screenHeight * 0.1,
-          //               decoration: ShapeDecoration(
-          //                 color: Colors.white,
-          //                 shape: RoundedRectangleBorder(
-          //                   side: BorderSide(width: 1, color: Color(0xFF1EBAFB)),
-          //                   borderRadius: BorderRadius.circular(2),
-          //                 ),
-          //               ),
-          //             ),
-          //           ),
-          //           Positioned(
-          //             left: 0.19,
-          //             top: screenHeight * 0.088,
-          //             child: Container(
-          //               width: screenWidth * 0.46,
-          //               height: screenHeight * 0.008,
-          //               decoration: ShapeDecoration(
-          //                 color: Color(0xFF1EBAFB),
-          //                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-          //               ),
-          //             ),
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
-
-
           Positioned(
             left: screenWidth * 0.30,
             top: screenHeight * 0.239,
@@ -876,18 +807,6 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
             child: SizedBox(
               width: screenWidth * 0.16,
               height: screenHeight * 0.015,
-              /*child: Text(
-                '00.00%',
-                textAlign: TextAlign.right,
-                style: TextStyle(
-                  color: Color(0xFFD6D6D6),
-                  fontSize: 11,
-                  fontFamily: 'LGText', // 폰트 이름 확인
-                  fontWeight: FontWeight.w400,
-                  height: 0.29,
-                  decoration: TextDecoration.none,  // 밑줄 제거
-                ),
-              ),*/
             ),
           ),
           Positioned(
@@ -953,8 +872,6 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
               ),
             ),
           ),
-
-
           Positioned(
             left: 0,
             top: screenHeight * 0.974,
@@ -963,5 +880,68 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
         ],
       ),
     );
+  }
+}
+
+class InnerShadowContainer extends StatelessWidget {
+  final double width;
+  final double height;
+  final Color shadowColor;
+  final Color containerColor;
+
+  InnerShadowContainer({
+    required this.width,
+    required this.height,
+    required this.shadowColor,
+    required this.containerColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: InnerShadowPainter(
+        shadowColor: shadowColor,
+        containerColor: containerColor,
+      ),
+      size: Size(width, height),
+    );
+  }
+}
+
+class InnerShadowPainter extends CustomPainter {
+  final Color shadowColor;
+  final Color containerColor;
+
+  InnerShadowPainter({
+    required this.shadowColor,
+    required this.containerColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = containerColor
+      ..style = PaintingStyle.fill;
+
+    // 컨테이너 색상 그리기
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, size.width, size.height), Radius.circular(8)),
+      paint,
+    );
+
+    // 그림자 효과 추가
+    final shadowPaint = Paint()
+      ..color = shadowColor.withOpacity(0.4)  // 그림자 투명도 조정
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 8);  // 블러 효과
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(Rect.fromLTWH(2, 2, size.width - 4, size.height - 4), Radius.circular(8)),
+      shadowPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }

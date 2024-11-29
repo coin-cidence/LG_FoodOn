@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FoodDetailPage extends StatefulWidget {
+  final Map<String, dynamic> foodData; // FoodList에서 전달받은 데이터
+
+  FoodDetailPage({required this.foodData});
+
   @override
   _FoodDetailPageState createState() => _FoodDetailPageState();
 }
 
 class _FoodDetailPageState extends State<FoodDetailPage> {
-  String shelfLocation = "선반 1";
-  String foodName = "가지";
-  DateTime foodRegisterDate = DateTime(2024, 11, 20);
-  int storageDays = 0;
-  TextEditingController foodExpirationDate = TextEditingController();
-  bool isExpiryToggle = false;
-  bool isNotificationToggle = true;
-  String foodUnusedNotifPeriod = "1주일";
+  late String shelfName;
+  late String foodName;
+  late DateTime foodRegisterDate;
+  late int storageDays;
+  late TextEditingController foodExpirationDate;
+  late bool isExpiryToggle;
+  late bool isNotificationToggle;
+  late String foodUnusedNotifPeriod;
   late String originalFoodName;
   late String originalFoodUnusedNotifPeriod;
-
-  bool isEditing = false;
 
   final List<String> notificationOptions = [
     "1주일",
@@ -29,22 +32,65 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   ];
 
   String? notificationMessage;
+  bool isEditing = false; // 편집 모드 상태
 
   @override
   void initState() {
     super.initState();
-    originalFoodName = foodName;
-    originalFoodUnusedNotifPeriod = foodUnusedNotifPeriod;
+    // FoodList에서 전달받은 데이터로 초기화
+    final foodData = widget.foodData;
+    shelfName = foodData['smart_shelf_name'] ?? '선반 1';
+    foodName = foodData['food_name'] ?? '식품 이름 없음';
+    foodUnusedNotifPeriod = "${foodData['food_unused_notif_period'] ?? 5}일";
     notificationMessage = "$foodUnusedNotifPeriod 이상 사용하지 않으면 알림을 받아요.";
-    foodExpirationDate.text = "";
+    foodRegisterDate = foodData['food_register_date'] ?? DateTime.now(); // 이미 DateTime으로 변환됨
+    storageDays = 0; // 초기값 설정
+    foodExpirationDate = TextEditingController(
+      text: foodData['food_expiration_date'] != null
+          ? (foodData['food_expiration_date'] as Timestamp).toDate().toIso8601String()
+          : '',
+    );
+    isExpiryToggle = foodData['food_is_expiry'] ?? false;
+    isNotificationToggle = foodData['food_is_notif'] ?? true;
+
+    // 안내 메시지 초기화
+    notificationMessage = "$foodUnusedNotifPeriod 이상 사용하지 않으면 알림을 받아요.";
+    calculateStorageDays(); // 보관일수 계산
     calculateStorageDays();
   }
 
   void calculateStorageDays() {
-    DateTime currentDate = DateTime.now();
+    DateTime currentDate = DateTime.now(); // 현재 날짜
     setState(() {
-      storageDays = currentDate.difference(foodRegisterDate).inDays;
+      storageDays = currentDate.difference(foodRegisterDate).inDays; // 날짜 차이를 계산하여 저장
     });
+  }
+
+  Future<void> _updateFoodData() async {
+    try {
+      // Firestore 업데이트 로직
+      final foodDocId = widget.foodData['id']; // FoodList에서 전달받은 문서 ID
+      await FirebaseFirestore.instance
+          .collection('FOOD_MANAGEMENT') // 컬렉션 이름
+          .doc(foodDocId) // 문서 ID
+          .update({
+        'food_name': foodName,
+        'food_expiration_date': foodExpirationDate.text.isNotEmpty
+            ? DateTime.parse(foodExpirationDate.text) // 문자열을 DateTime으로 변환
+            : null,
+        'food_is_expiry': isExpiryToggle,
+        'food_is_notif': isNotificationToggle,
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('데이터가 성공적으로 업데이트되었습니다!')),
+      );
+    } catch (e) {
+      print("Error updating food data: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('데이터 업데이트 중 오류가 발생했습니다.')),
+      );
+    }
   }
 
   void _onExpiryDateChanged(String value) {
@@ -69,7 +115,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       foodExpirationDate.text = foodExpirationDate.text.substring(0, 10);
     }
   }
-
+  //추가 함수
   void _showDeleteDialogForDetail() {
     showDialog(
       context: context,
@@ -114,7 +160,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       },
     );
   }
-
   String _formatExpiryDate(String value) {
     String result = value;
 
@@ -152,8 +197,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     );
   }
 
-
-
   @override
   void dispose() {
     foodExpirationDate.dispose();
@@ -183,7 +226,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                   },
                 ),
                 title: Text(
-                  shelfLocation,
+                  shelfName,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -243,6 +286,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                               onTap: () {
                                 setState(() {
                                   isEditing = true;
+                                  _updateFoodData(); // Firestore 업데이트 호출
                                 });
                               },
                               child: Row(
