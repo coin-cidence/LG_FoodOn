@@ -12,6 +12,8 @@ dependencies:
   flutter:
     sdk: flutter
   intl: ^0.18.0 # 최신 버전
+  avatar_glow: ^2.0.2 # 최신 버전 확인 후 업데이트
+
 
   cupertino_icons: ^1.0.8
   firebase_core: ^3.6.0
