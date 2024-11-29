@@ -27,8 +27,13 @@ class _FoodListPageState extends State<FoodListPage> {
     super.initState();
     selectedShelfSerial = widget.shelfSerial;
     selectedShelf = _getShelfLocation(selectedShelfSerial);
-    fetchFoodData(selectedShelfSerial);
+
+    // 위젯 트리 초기화 후 데이터 로드 및 다이얼로그 표시
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchFoodData(selectedShelfSerial);
+    });
   }
+
 
   String _getShelfLocation(String serial) {
     final shelvesData = DummyData.getSmartShelvesData();
