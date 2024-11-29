@@ -110,7 +110,6 @@ class _FoodListPageState extends State<FoodListPage> {
     return MediaQuery.of(context).size.height * 0.1; // 기본값
   }
 
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -121,14 +120,16 @@ class _FoodListPageState extends State<FoodListPage> {
       });
     }
   }
+
   void _showNoDataDialog() {
     showDialog(
+      barrierDismissible: true,
       context: context,
       builder: (context) {
         return AlertDialog(
           backgroundColor: Colors.white,  // 배경색을 하얀색으로 설정
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),  // 모서리를 둥글게 만드는 부분
+            borderRadius: BorderRadius.circular(5),  // 모서리를 둥글게 만드는 부분
           ),
           title: Text("식품을 등록하세요!"),
           content: Text("식품을 등록하면 선반에 표시됩니다."),
@@ -148,24 +149,87 @@ class _FoodListPageState extends State<FoodListPage> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      body: SafeArea(
-        child: Stack(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            size: 30, // 아이콘 크기 조정
+            color: Colors.black, // 아이콘 색상 설정
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Row(
           children: [
-            _buildBackground(),
-            Column(
+            Transform.translate(
+              offset: Offset(-30, 0), // 왼쪽으로 30 이동
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 8), // 내부 여백
+                child: DropdownButton<String>(
+                  underline: SizedBox.shrink(), // 밑줄 제거
+                  iconSize: 20, // 아이콘 크기 설정
+                  value: selectedShelf,
+                  items: DummyData.getSmartShelvesData().map((shelf) {
+                    return DropdownMenuItem<String>(
+                      value: shelf['shelfLocation'],
+                      child: Text(
+                        shelf['shelfLocation'],
+                        style: TextStyle(color: Colors.black), // 드롭다운 텍스트 색상 설정
+                      ),
+                    );
+                  }).toList(),
+                  dropdownColor: Color(0xFFFFFFFF),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedShelf = value!;
+                      highlightedLocations = [];
+                      filteredFoodData = List.from(allFoodData);
+                    });
+                  },
+                ),
+              ),
+            ),
+            Spacer(), // 왼쪽과 오른쪽 정렬을 위한 Spacer
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {},
+            ),
+            IconButton(
+              key: infoButtonKey,
+              icon: Icon(Icons.info),
+              onPressed: () {
+                setState(() {
+                  _isInfoVisible = !_isInfoVisible;
+                });
+              },
+            ),
+          ],
+        ),
+      ),
+      body: Stack(
+        children: [
+          _buildBackground(),
+          SafeArea( // 콘텐츠가 안전한 위치에 배치되도록 함
+            child: Column(
               children: [
-                _buildAppBar(context),
                 _buildGridArea(screenWidth),
                 _buildListArea(screenWidth),
               ],
             ),
-            if (_isInfoVisible)
-              InfoDialog(
-                xPosition: MediaQuery.of(context).size.width / 2,
-                yPosition: _calculateInfoDialogPosition(),
-              ),
-          ],
-        ),
+          ),
+          if (_isInfoVisible)
+            InfoDialog(
+              xPosition: MediaQuery.of(context).size.width / 2,
+              yPosition: _calculateInfoDialogPosition(),
+            ),
+        ],
       ),
     );
   }
@@ -177,50 +241,6 @@ class _FoodListPageState extends State<FoodListPage> {
           image: AssetImage('images/FTIE_엘지배경_대지.png'),
           fit: BoxFit.cover,
         ),
-      ),
-    );
-  }
-
-  Widget _buildAppBar(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
-          ),
-          DropdownButton<String>(
-            value: selectedShelf,
-            items: DummyData.getSmartShelvesData().map((shelf) {
-              return DropdownMenuItem<String>(
-                value: shelf['shelfLocation'],
-                child: Text(shelf['shelfLocation']),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                selectedShelf = value!;
-                highlightedLocations = [];
-                filteredFoodData = List.from(allFoodData);
-              });
-            },
-          ),
-          Spacer(),
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {},
-          ),
-          IconButton(
-            key: infoButtonKey,
-            icon: Icon(Icons.info),
-            onPressed: () {
-              setState(() {
-                _isInfoVisible = !_isInfoVisible;
-              });
-            },
-          ),
-        ],
       ),
     );
   }
@@ -342,11 +362,13 @@ class _FoodListPageState extends State<FoodListPage> {
           ),
         ),
         DropdownButton<String>(
+          alignment: Alignment.center,
+          underline: SizedBox.shrink(), // 밑줄 제거
+          iconSize:20,
           value: selectedFilter,
           icon: Icon(
             Icons.arrow_drop_down,
-            color: Color(0xFFAEAEAE),
-            size: 18.0,
+            color: Color(0xFF8D9294),
           ),
           items: ["가나다순", "오래된순", "장기미사용식품"].map((String value) {
             return DropdownMenuItem<String>(
@@ -355,7 +377,7 @@ class _FoodListPageState extends State<FoodListPage> {
                 value,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Color(0xFFAEAEAE),
+                  color: Color(0xFF8D9294),
                 ),
               ),
             );
@@ -394,8 +416,8 @@ class _FoodListPageState extends State<FoodListPage> {
                 );
               },
               icon: Icons.info,
-              iconColor: Colors.white,
-              backgroundColor: Colors.blue,
+              iconColor: Colors.blue,
+              backgroundColor: Colors.white,
             ),
           ),
           // 오른쪽 버튼 (삭제)
@@ -405,8 +427,8 @@ class _FoodListPageState extends State<FoodListPage> {
                 _showDeleteDialog(index);
               },
               icon: Icons.delete,
-              iconColor: Colors.white,
-              backgroundColor: Colors.red,
+              iconColor: Colors.red,
+              backgroundColor: Colors.white,
             ),
           ),
         ],
@@ -486,6 +508,10 @@ class _FoodListPageState extends State<FoodListPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: Colors.white,  // 배경색을 하얀색으로 설정
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),  // 모서리를 둥글게 만드는 부분
+          ),
           title: Text('삭제 확인'),
           content: Text('해당 식품을 삭제하시겠습니까?'),
           actions: [
@@ -493,7 +519,7 @@ class _FoodListPageState extends State<FoodListPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('취소'),
+              child: Text('취소', style: TextStyle(color: Colors.black)),
             ),
             TextButton(
               onPressed: () {
@@ -542,9 +568,9 @@ class CustomSlidableButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        width: 50, // 버튼 너비
+        width: 55, // 버튼 너비
         height: 55, // 버튼 높이
-        margin: const EdgeInsets.symmetric(horizontal: 10),
+        margin: const EdgeInsets.only(left: 20), // 왼쪽에만 10의 마진 추가
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(5), // 모서리 둥글게
@@ -561,7 +587,7 @@ class CustomSlidableButton extends StatelessWidget {
         child: Icon(
           icon,
           color: iconColor,
-          size: 24,
+          size: 25,
         ),
       ),
     );
