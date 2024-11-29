@@ -31,12 +31,11 @@ class _FoodListPageState extends State<FoodListPage> {
   void initState() {
     super.initState();
     selectedShelfSerial = widget.shelfSerial;
-    print('전달된 ShelfSerial: $selectedShelfSerial'); // 값 출력
+    print('목록에 ShelfSerial: $selectedShelfSerial'); // 값 출력
 
     fetchShelfName(selectedShelfSerial);
-    fetchShelfName(selectedShelfSerial);
     _fetchAllFoodData(selectedShelfSerial);
-    _applyFilter(selectedFilter);
+    // _applyFilter(selectedFilter);
   }
 
   // Firestore에서 선반 이름 가져오기
@@ -51,10 +50,12 @@ class _FoodListPageState extends State<FoodListPage> {
       if (snapshot.docs.isNotEmpty) {
         setState(() {
           shelfName = snapshot.docs.first['smart_shelf_name'];
+          print('선반 이름: $shelfName');
         });
       } else {
         setState(() {
           shelfName = "이름 없음";
+          print('SMART_SHELF에 데이터가 없음');
         });
       }
     } catch (e) {
@@ -72,6 +73,7 @@ class _FoodListPageState extends State<FoodListPage> {
           .collection('FOOD_MANAGEMENT')
           .where('smart_shelf_serial', isEqualTo: shelfSerial)
           .get();
+      print('Firestore 쿼리 결과: ${snapshot.docs.length}개');
 
       setState(() {
         allFoodData = snapshot.docs.map((doc) {
@@ -91,6 +93,10 @@ class _FoodListPageState extends State<FoodListPage> {
                 : null,
           };
         }).toList();
+        print('allFoodData 설정 완료: ${allFoodData.length}개');
+
+        // 데이터가 설정된 후에만 필터 적용
+        _applyFilter(selectedFilter);
       });
     } catch (e) {
       print("Error fetching food data: $e");
@@ -99,6 +105,11 @@ class _FoodListPageState extends State<FoodListPage> {
   }
 
   void _applyFilter(String filter) {
+    if (allFoodData.isEmpty) {
+      print('allFoodData가 비어 있어 필터를 적용하지 않음');
+      return;
+    }
+
     List<Map<String, dynamic>> filteredData = List.from(allFoodData);
 
     // 필터 조건에 따라 정렬 및 필터링
@@ -119,6 +130,8 @@ class _FoodListPageState extends State<FoodListPage> {
 
     setState(() {
       filteredFoodData = filteredData; // 필터된 데이터를 저장
+      print('filteredFoodData 길이: ${filteredFoodData.length}');
+
     });
   }
 
@@ -189,6 +202,7 @@ class _FoodListPageState extends State<FoodListPage> {
     // 데이터가 비어 있다면 다이얼로그를 호출
     if (allFoodData.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        print('너 뭔데');
         _showNoDataDialog();
       });
     }
@@ -223,8 +237,13 @@ class _FoodListPageState extends State<FoodListPage> {
                 /*child: DropdownButton<String>(
                   underline: SizedBox.shrink(), // 밑줄 제거
                   iconSize: 20, // 아이콘 크기 설정
+
+                  // 데이터를 정렬된 순서로 가져옴
+                  final shelves = snapshot.data!;
+                  shelves.sort((a, b) => a['shelfName'].compareTo(b['shelfName'])); // 이름으로 정렬
+
                   value: shelfName,
-                  items: shelves.map((shelf) {
+                  items: shelves.map((selectedShelfSerial) {
                     return DropdownMenuItem<String>(
                       value:
                       '${shelfName}',
@@ -246,6 +265,8 @@ class _FoodListPageState extends State<FoodListPage> {
                 child: FutureBuilder<List<Map<String, dynamic>>>(
                   future: firestoreService.fetchSmartShelvesData(selectedShelfSerial), // Firestore에서 데이터 로드
                   builder: (context, snapshot) {
+                    print('헤이전달된 selectedShelfSerial: $selectedShelfSerial');
+
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return CircularProgressIndicator(); // 로딩 중 표시
                     }
