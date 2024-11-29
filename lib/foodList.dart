@@ -321,7 +321,6 @@ class _FoodListPageState extends State<FoodListPage> {
     );
   }
 
-
   Widget _buildFilterRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -367,70 +366,38 @@ class _FoodListPageState extends State<FoodListPage> {
   }
 
   Widget _buildFoodListItem(Map<String, dynamic> food, int index) {
+    double listItemWidth = double.infinity; // 초기 너비 값
+
     return Slidable(
       key: ValueKey(food['foodName']),
       endActionPane: ActionPane(
         motion: StretchMotion(),
+        extentRatio: 0.5, // 슬라이드 시 버튼 영역 비율
         children: [
-          CustomSlidableAction(
-            onPressed: (context) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => FoodDetailPage(),
-                ),
-              );
-            },
-            backgroundColor: Colors.transparent,
-            child: Container(
-              width: 55,
-              height: 55,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(5),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: Offset(0, 2),
+          Expanded(
+            child: CustomSlidableButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FoodDetailPage(),
                   ),
-                ],
-              ),
-              alignment: Alignment.center,
-              child: Icon(
-                Icons.info,
-                color: Colors.blue,
-                size: 24,
-              ),
+                );
+              },
+              icon: Icons.info,
+              iconColor: Colors.white,
+              backgroundColor: Colors.blue,
             ),
           ),
-          CustomSlidableAction(
-            onPressed: (context) {
-              _showDeleteDialog(index);
-            },
-            backgroundColor: Colors.transparent,
-            child: Container(
-              width: 55,
-              height: 55,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(5),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              alignment: Alignment.center,
-              child: Icon(
-                Icons.delete,
-                color: Colors.red,
-                size: 24,
-              ),
+          // 오른쪽 버튼 (삭제)
+          Expanded(
+            child: CustomSlidableButton(
+              onPressed: () {
+                _showDeleteDialog(index);
+              },
+              icon: Icons.delete,
+              iconColor: Colors.white,
+              backgroundColor: Colors.red,
             ),
           ),
         ],
@@ -449,7 +416,7 @@ class _FoodListPageState extends State<FoodListPage> {
           });
         },
         child: Container(
-        width: double.infinity,
+        // width: double.infinity,
         height: 55,
         margin: const EdgeInsets.symmetric(vertical: 10),
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -542,6 +509,52 @@ class _FoodListPageState extends State<FoodListPage> {
           ],
         );
       },
+    );
+  }
+}
+
+
+class CustomSlidableButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final IconData icon;
+  final Color iconColor;
+  final Color backgroundColor;
+
+  const CustomSlidableButton({
+    Key? key,
+    required this.onPressed,
+    required this.icon,
+    required this.iconColor,
+    required this.backgroundColor,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: 50, // 버튼 너비
+        height: 55, // 버튼 높이
+        margin: const EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(5), // 모서리 둥글게
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        alignment: Alignment.center,
+        child: Icon(
+          icon,
+          color: iconColor,
+          size: 24,
+        ),
+      ),
     );
   }
 }
