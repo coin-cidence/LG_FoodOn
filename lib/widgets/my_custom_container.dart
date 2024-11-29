@@ -1,15 +1,61 @@
 import 'package:flutter/material.dart';
-import '../foodList.dart';  // 새 화면을 임포트
-import '../dummy_data.dart';
+import '../foodList.dart'; // FoodListPage 임포트
+import '../firestore_service.dart'; // FirestoreService 임포트
 
-class MyCustomContainer extends StatelessWidget {
+class MyCustomContainer extends StatefulWidget {
+  @override
+  _MyCustomContainerState createState() => _MyCustomContainerState();
+}
+
+class _MyCustomContainerState extends State<MyCustomContainer> {
+  final FirestoreService _firestoreService = FirestoreService();
+  String? shelfSerial;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchShelfSerial(); // Firestore에서 데이터 가져오기
+  }
+
+  Future<void> _fetchShelfSerial() async {
+    try {
+      // Firestore에서 모든 SMART_SHELF 데이터를 가져오기
+      final shelves = await _firestoreService.fetchSmartShelvesData("6879ZASD123456");
+
+      // "smart_shelf_serial" 값이 "SSS123456"과 일치하는 항목 찾기
+      final matchingShelf = shelves.firstWhere(
+            (shelf) => shelf['ShelfSerial'] == "SSS123456",
+      );
+
+      setState(() {
+        shelfSerial = matchingShelf?['ShelfSerial']; // 매칭된 ShelfSerial 설정 또는 null
+      });
+
+      if (shelfSerial == null) {
+        // 데이터가 없을 경우 사용자에게 알림
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("선반 데이터를 찾을 수 없습니다.")),
+        );
+      } else {
+        print("가져온 ShelfSerial: $shelfSerial");
+      }
+    } catch (e) {
+      print("Error fetching shelf data: $e");
+      setState(() {
+        shelfSerial = null; // 에러 발생 시 null로 설정
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("선반 데이터를 로드하는 중 오류가 발생했습니다.")),
+      );
+    }
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-
-    // 더미 데이터 로드
-    final shelvesData = DummyData.getSmartShelvesData();
 
     return Container(
       width: screenWidth,
@@ -18,6 +64,7 @@ class MyCustomContainer extends StatelessWidget {
       decoration: BoxDecoration(color: Colors.white),
       child: Stack(
         children: [
+          // 배경 그라데이션
           Positioned(
             left: 0,
             top: 0,
@@ -34,37 +81,31 @@ class MyCustomContainer extends StatelessWidget {
             ),
           ),
 
-
-          // 스마트 선반 텍스트, 그리고 화살표 부분
+          // 스마트 선반 텍스트와 뒤로가기 화살표
           Positioned(
             left: screenWidth * 0.07 - 24, // 텍스트 왼쪽으로 아이콘 위치 조정
             top: screenHeight * 0.06,
             child: GestureDetector(
               onTap: () {
-                // 메시지 출력
+                // 이전 화면으로 돌아가기
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text("이전 화면으로 넘어갑니다")),
                 );
-
-                // 화면 전환: 이전 페이지로 이동 현지 수정
                 Future.delayed(Duration(seconds: 1), () {
                   Navigator.pop(context); // 이전 화면으로 이동
                 });
               },
               child: Row(
                 children: [
-                  // 화살표 아이콘
                   Container(
-                    width: screenWidth * 0.12, // 아이콘 너비
-                    height: screenHeight * 0.057, // 아이콘 높이
+                    width: screenWidth * 0.12,
+                    height: screenHeight * 0.057,
                     child: Icon(
                       Icons.arrow_back,
-                      color: Colors.black, // 아이콘 색상
-                      size: screenWidth * 0.06, // 아이콘 크기
+                      color: Colors.black,
+                      size: screenWidth * 0.06,
                     ),
                   ),
-
-                  // "스마트 선반" 텍스트
                   SizedBox(
                     width: screenWidth * 0.25,
                     height: screenHeight * 0.005,
@@ -84,7 +125,7 @@ class MyCustomContainer extends StatelessWidget {
             ),
           ),
 
-
+          // 스마트 선반 안내 텍스트
           Positioned(
             left: screenWidth * 0.14,
             top: screenHeight * 0.926,
@@ -105,23 +146,26 @@ class MyCustomContainer extends StatelessWidget {
             ),
           ),
 
-
-
-
-          // 선반 1 클릭 이벤트 추가
+          // 선반 1 (Firestore 연동 데이터 사용)
           Positioned(
             left: screenWidth * 0.83,
             top: screenHeight * 0.22,
             child: GestureDetector(
               onTap: () {
-                // 선반 1 클릭 시 다른 화면으로 전환
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FoodListPage(
-                      shelfSerial: shelvesData[0]['smartShelfSerial'], // 선반2 데이터 전달
+                if (shelfSerial != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FoodListPage(
+                        shelfSerial: shelfSerial!, // Firestore 데이터 사용
+                      ),
                     ),
-                  ),                );
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("선반 데이터를 불러오는 중입니다.")),
+                  );
+                }
               },
               child: SizedBox(
                 width: screenWidth * 0.087,
@@ -140,29 +184,6 @@ class MyCustomContainer extends StatelessWidget {
               ),
             ),
           ),
-
-
-          // Positioned(
-          //   left: screenWidth * 0.83,
-          //   top: screenHeight * 0.22,
-          //   child: SizedBox(
-          //     width: screenWidth * 0.087,
-          //     height: screenHeight * 0.019,
-          //     child: Text(
-          //       '선반 1',
-          //       style: TextStyle(
-          //         color: Color(0xFF00C0F5),
-          //         fontSize: 14,
-          //         fontFamily: 'LG EI Text TTF',
-          //         fontWeight: FontWeight.w400,
-          //         height: 0.18,
-          //         letterSpacing: -0.70,
-          //       ),
-          //     ),
-          //   ),
-          // ),
-
-
 
 
           Positioned(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dummy_data.dart';
-import 'info_dialog.dart';
-import 'FoodDetailPage.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'FoodDetailPage.dart';
+import 'info_dialog.dart';
 
 class FoodListPage extends StatefulWidget {
   final String shelfSerial;
@@ -15,39 +15,79 @@ class FoodListPage extends StatefulWidget {
 
 class _FoodListPageState extends State<FoodListPage> {
   late String selectedShelfSerial;
-  late String selectedShelf;
+  String? shelfName;
   List<Map<String, dynamic>> foodData = [];
   List<Map<String, int>> highlightedLocations = [];
-
   bool _isInfoVisible = false;
   GlobalKey infoButtonKey = GlobalKey();
+
+  String selectedFilter = "가나다순"; // 기본 필터값
 
   @override
   void initState() {
     super.initState();
     selectedShelfSerial = widget.shelfSerial;
-    selectedShelf = _getShelfLocation(selectedShelfSerial);
+    fetchShelfName(selectedShelfSerial);
     fetchFoodData(selectedShelfSerial);
   }
 
-  String _getShelfLocation(String serial) {
-    final shelvesData = DummyData.getSmartShelvesData();
-    final shelf = shelvesData.firstWhere(
-          (s) => s['smartShelfSerial'] == serial,
-      orElse: () => {'shelfLocation': '선반 1'},
-    );
-    return shelf['shelfLocation'];
+  // Firestore에서 선반 이름 가져오기
+  Future<void> fetchShelfName(String shelfSerial) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('SMART_SHELF')
+          .where('smart_shelf_serial', isEqualTo: shelfSerial)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        setState(() {
+          shelfName = snapshot.docs.first['smart_shelf_name'];
+        });
+      } else {
+        setState(() {
+          shelfName = "이름 없음";
+        });
+      }
+    } catch (e) {
+      print("Error fetching shelf name: $e");
+      setState(() {
+        shelfName = "오류 발생";
+      });
+    }
   }
 
-  void fetchFoodData(String shelfSerial) {
-    final allFoodData = DummyData.getFoodManagementData();
-    final fetchedData = allFoodData.where((food) => food['smartShelfSerial'] == shelfSerial).toList();
+  Future<void> fetchFoodData(String shelfSerial) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('FOOD_MANAGEMENT')
+          .where('smart_shelf_serial', isEqualTo: shelfSerial)
+          .get();
 
-    setState(() {
-      foodData = fetchedData;
-    });
+      setState(() {
+        foodData = snapshot.docs.map((doc) {
+          final data = doc.data();
+          return {
+            ...data,
+            'id': doc.id,
+            'food_weight_update_time': data['food_weight_update_time'] is Timestamp
+                ? (data['food_weight_update_time'] as Timestamp).toDate()
+                : data['food_weight_update_time'],
+            'food_register_date': data['food_register_date'] is Timestamp
+                ? (data['food_register_date'] as Timestamp).toDate()
+                : data['food_register_date'],
+            'food_expiration_date': data['food_expiration_date'] != null &&
+                data['food_expiration_date'] is Timestamp
+                ? (data['food_expiration_date'] as Timestamp).toDate()
+                : null,
+          };
+        }).toList();
+      });
 
-    if (fetchedData.isEmpty) {
+      if (foodData.isEmpty) {
+        _showNoDataDialog();
+      }
+    } catch (e) {
+      print("Error fetching food data: $e");
       _showNoDataDialog();
     }
   }
@@ -73,20 +113,25 @@ class _FoodListPageState extends State<FoodListPage> {
   Color _getCellColor(Map<String, dynamic> cellData) {
     if (cellData.isEmpty) return Colors.white;
 
-    final isUnused = DateTime.now()
-        .difference(DateTime.parse(cellData['foodWeightUpdateTime']))
-        .inDays >=
-        cellData['foodUnusedNotifPeriod'];
+    final lastUpdatedTime = cellData['food_weight_update_time'];
+    if (lastUpdatedTime == null || lastUpdatedTime is! DateTime) {
+      return Colors.white;
+    }
 
-    if (isUnused) return Color(0xFFF0D0FF); // 보라색
-    if (cellData['foodWeight'] != 0) return Color(0xFFB4E0FF); // 파란색
-    return Color(0xFFFFA68B); // 빨간색
+    final isUnused = DateTime.now()
+        .difference(lastUpdatedTime)
+        .inDays >=
+        (cellData['food_unused_notif_period'] ?? 0);
+
+    if (isUnused) return Color(0xFFF0D0FF);
+    if (cellData['food_weight'] != 0) return Color(0xFFB4E0FF);
+    return Color(0xFFFFA68B);
   }
 
   Color _getHighlightedColor(Color baseColor) {
-    if (baseColor == Color(0xFFF0D0FF)) return Color(0xFFBA35FF); // 강조된 보라색
-    if (baseColor == Color(0xFFB4E0FF)) return Color(0xFF2DA9FF); // 강조된 파란색
-    if (baseColor == Color(0xFFFFA68B)) return Color(0xFFFF693C); // 강조된 빨간색
+    if (baseColor == Color(0xFFF0D0FF)) return Color(0xFFBA35FF);
+    if (baseColor == Color(0xFFB4E0FF)) return Color(0xFF2DA9FF);
+    if (baseColor == Color(0xFFFFA68B)) return Color(0xFFFF693C);
     return baseColor;
   }
 
@@ -95,15 +140,16 @@ class _FoodListPageState extends State<FoodListPage> {
       final RenderBox? box = infoButtonKey.currentContext?.findRenderObject() as RenderBox?;
       if (box != null) {
         final Offset position = box.localToGlobal(Offset.zero);
-        return position.dy + box.size.height; // 정보 아이콘 아래에 위치
+        return position.dy + box.size.height;
       }
     } catch (e) {
       print("Error calculating dialog position: $e");
     }
-    return MediaQuery.of(context).size.height * 0.1; // 기본값
+    return MediaQuery.of(context).size.height * 0.1;
   }
 
   @override
+
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -146,46 +192,23 @@ class _FoodListPageState extends State<FoodListPage> {
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          Row(
-            children: [
-              IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () => Navigator.pop(context),
-              ),
-              DropdownButton<String>(
-                value: selectedShelf,
-                items: DummyData.getSmartShelvesData().map((shelf) {
-                  return DropdownMenuItem<String>(
-                    value: shelf['shelfLocation'],
-                    child: Text(shelf['shelfLocation']),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedShelf = value!;
-                    highlightedLocations = [];
-                  });
-                },
-              ),
-            ],
+          IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context),
+          ),
+          Text(
+            '${shelfName}',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           Spacer(),
-          Row(
-            children: [
-              IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {},
-              ),
-              IconButton(
-                key: infoButtonKey,
-                icon: Icon(Icons.info),
-                onPressed: () {
-                  setState(() {
-                    _isInfoVisible = !_isInfoVisible;
-                  });
-                },
-              ),
-            ],
+          IconButton(
+            key: infoButtonKey,
+            icon: Icon(Icons.info),
+            onPressed: () {
+              setState(() {
+                _isInfoVisible = !_isInfoVisible;
+              });
+            },
           ),
         ],
       ),
@@ -204,7 +227,7 @@ class _FoodListPageState extends State<FoodListPage> {
               final column = index % columns;
 
               final cellData = foodData.firstWhere(
-                    (food) => food['foodLocation'].any(
+                    (food) => food['food_location'].any(
                       (loc) => loc['x'] == row && loc['y'] == column,
                 ),
                 orElse: () => <String, dynamic>{},
@@ -248,24 +271,23 @@ class _FoodListPageState extends State<FoodListPage> {
               final cellColor = _getCellColor(food);
 
               return Slidable(
-                key: ValueKey(food['foodName']),
+                key: ValueKey(food['id']),
                 endActionPane: ActionPane(
-                  motion: StretchMotion(), // Stretch Motion
+                  motion: StretchMotion(),
                   children: [
-                    // 정보 버튼
                     CustomSlidableAction(
                       onPressed: (context) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => FoodDetailPage(), // 상세보기 페이지
+                            builder: (context) => FoodDetailPage(foodData: food),
                           ),
                         );
                       },
                       backgroundColor: Colors.transparent,
                       child: Container(
-                        width: 55, // 커스텀 너비
-                        height: 55, // 커스텀 높이
+                        width: 55,
+                        height: 55,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(5),
@@ -282,11 +304,10 @@ class _FoodListPageState extends State<FoodListPage> {
                         child: Icon(
                           Icons.info,
                           color: Colors.blue,
-                          size: 24, // 아이콘 크기
+                          size: 24,
                         ),
                       ),
                     ),
-                    // 삭제 버튼
                     CustomSlidableAction(
                       onPressed: (context) {
                         showDialog(
@@ -301,7 +322,7 @@ class _FoodListPageState extends State<FoodListPage> {
                               actions: [
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.of(context).pop(); // 다이얼로그 닫기
+                                    Navigator.of(context).pop();
                                   },
                                   child: Text(
                                     '취소',
@@ -311,11 +332,11 @@ class _FoodListPageState extends State<FoodListPage> {
                                 TextButton(
                                   onPressed: () {
                                     setState(() {
-                                      foodData.removeAt(index); // 항목 삭제
+                                      foodData.removeAt(index);
                                     });
-                                    Navigator.of(context).pop(); // 다이얼로그 닫기
+                                    Navigator.of(context).pop();
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text("${food['foodName']} 삭제됨")),
+                                      SnackBar(content: Text("${food['food_name']} 삭제됨")),
                                     );
                                   },
                                   child: Text(
@@ -330,8 +351,8 @@ class _FoodListPageState extends State<FoodListPage> {
                       },
                       backgroundColor: Colors.transparent,
                       child: Container(
-                        width: 55, // 커스텀 너비
-                        height: 55, // 커스텀 높이
+                        width: 55,
+                        height: 55,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(5),
@@ -348,15 +369,15 @@ class _FoodListPageState extends State<FoodListPage> {
                         child: Icon(
                           Icons.delete,
                           color: Colors.red,
-                          size: 24, // 아이콘 크기
+                          size: 24,
                         ),
                       ),
+
                     ),
                   ],
                 ),
                 child: GestureDetector(
                   onTap: () {
-                    // 기존 클릭 기능 유지
                     setState(() {
                       highlightedLocations = List<Map<String, int>>.from(food['foodLocation']);
                     });
@@ -382,7 +403,6 @@ class _FoodListPageState extends State<FoodListPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // 색상 박스
                         Container(
                           width: 30,
                           height: 30,
@@ -393,12 +413,11 @@ class _FoodListPageState extends State<FoodListPage> {
                             ),
                           ),
                         ),
-                        // 텍스트
                         Expanded(
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Text(
-                              food['foodName'],
+                              food['food_name'],
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 16,
@@ -409,9 +428,8 @@ class _FoodListPageState extends State<FoodListPage> {
                             ),
                           ),
                         ),
-                        // 화살표 아이콘
                         Icon(
-                          Icons.arrow_back_ios,
+                          Icons.arrow_forward_ios,
                           size: 16,
                           color: Colors.grey,
                         ),

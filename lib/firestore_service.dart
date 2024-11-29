@@ -44,7 +44,9 @@ class FirestoreService {
       final snapshot = await _firestore
           .collection('SMART_SHELF')
           .where('fridge_serial', isEqualTo: fridgeSerial)
+          // .where('smart_shelf_serial', isEqualTo: shelfSerial)
           .get();
+      print('SMART_SHELF 데이터: ${snapshot.docs.length}개');
 
       return snapshot.docs.map((doc) {
         final data = doc.data();
@@ -52,6 +54,7 @@ class FirestoreService {
           "ShelfSerial": data['smart_shelf_serial'],
           "shelfLocation": data['smart_shelf_location'],
           "fridgeSerial": data['fridge_serial'],
+          "shelfName": data['smart_shelf_name'],
           "shelfRegDate": data['smart_shelf_register_date'],
         };
       }).toList();
