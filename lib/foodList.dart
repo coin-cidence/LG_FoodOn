@@ -50,22 +50,26 @@ class _FoodListPageState extends State<FoodListPage> {
     final shelfData = allData.where((food) => food['smartShelfSerial'] == shelfSerial).toList();
 
     setState(() {
-      allFoodData = shelfData; // 전체 데이터를 저장
+      allFoodData = shelfData;
       if (shelfData.isEmpty) {
         _showNoDataDialog();
       } else {
-        filteredFoodData = List.from(allFoodData); // 기본적으로 전체 데이터를 필터 없이 저장
+        filteredFoodData = List.from(allFoodData);
       }
     });
   }
-
   void _showNoDataDialog() {
+    if (!mounted) return; // 위젯이 트리에서 제거되었을 경우 호출하지 않음
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("데이터 없음"),
-          content: Text("선택한 선반에 식품 정보가 없습니다."),
+          backgroundColor: Colors.white,  // 배경색을 하얀색으로 설정
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),  // 모서리를 둥글게 만드는 부분
+          ),
+          title: Text("식품을 등록하세요!"),
+          content: Text("식품을 등록하면 선반에 표시됩니다."),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
