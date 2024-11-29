@@ -876,7 +876,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
             child: SizedBox(
               width: screenWidth * 0.16,
               height: screenHeight * 0.015,
-              child: Text(
+              /*child: Text(
                 '00.00%',
                 textAlign: TextAlign.right,
                 style: TextStyle(
@@ -887,7 +887,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                   height: 0.29,
                   decoration: TextDecoration.none,  // 밑줄 제거
                 ),
-              ),
+              ),*/
             ),
           ),
           Positioned(
