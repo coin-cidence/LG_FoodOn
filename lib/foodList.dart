@@ -44,40 +44,16 @@ class _FoodListPageState extends State<FoodListPage> {
   }
 
   // 모든 데이터를 한 번만 가져옴
-
   void _fetchAllFoodData(String shelfSerial) {
     final allData = DummyData.getFoodManagementData();
     final shelfData = allData.where((food) => food['smartShelfSerial'] == shelfSerial).toList();
 
     setState(() {
       allFoodData = shelfData; // 전체 데이터를 저장
-      if (shelfData.isEmpty) {
-        _showNoDataDialog();
-      } else {
-        filteredFoodData = List.from(allFoodData); // 기본적으로 전체 데이터를 필터 없이 저장
-      }
+      filteredFoodData = List.from(allFoodData); // 기본적으로 전체 데이터를 필터 없이 저장
     });
   }
 
-  void _showNoDataDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text("데이터 없음"),
-          content: Text("선택한 선반에 식품 정보가 없습니다."),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text("확인"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  // 필터 적용 함수
   void _applyFilter(String filter) {
     List<Map<String, dynamic>> filteredData = List.from(allFoodData);
 
@@ -132,6 +108,39 @@ class _FoodListPageState extends State<FoodListPage> {
       print("Error calculating dialog position: $e");
     }
     return MediaQuery.of(context).size.height * 0.1; // 기본값
+  }
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 데이터가 비어 있다면 다이얼로그를 호출
+    if (allFoodData.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showNoDataDialog();
+      });
+    }
+  }
+  void _showNoDataDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,  // 배경색을 하얀색으로 설정
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),  // 모서리를 둥글게 만드는 부분
+          ),
+          title: Text("식품을 등록하세요!"),
+          content: Text("식품을 등록하면 선반에 표시됩니다."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("확인"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
