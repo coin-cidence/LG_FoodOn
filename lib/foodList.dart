@@ -31,6 +31,8 @@ class _FoodListPageState extends State<FoodListPage> {
   void initState() {
     super.initState();
     selectedShelfSerial = widget.shelfSerial;
+    print('전달된 ShelfSerial: $selectedShelfSerial'); // 값 출력
+
     fetchShelfName(selectedShelfSerial);
     fetchShelfName(selectedShelfSerial);
     _fetchAllFoodData(selectedShelfSerial);
@@ -43,6 +45,7 @@ class _FoodListPageState extends State<FoodListPage> {
       final snapshot = await FirebaseFirestore.instance
           .collection('SMART_SHELF')
           .where('smart_shelf_serial', isEqualTo: shelfSerial)
+          // .orderBy('smart_shelf_name') // 이름으로 정렬
           .get();
 
       if (snapshot.docs.isNotEmpty) {
@@ -241,16 +244,19 @@ class _FoodListPageState extends State<FoodListPage> {
                   },
                 ),*/
                 child: FutureBuilder<List<Map<String, dynamic>>>(
-                  future: firestoreService.fetchSmartShelvesData("6879ZASD123456"), // Firestore에서 데이터 로드
+                  future: firestoreService.fetchSmartShelvesData(selectedShelfSerial), // Firestore에서 데이터 로드
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return CircularProgressIndicator(); // 로딩 중 표시
                     }
                     if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Text("선반 없음", style: TextStyle(color: Colors.black)); // 오류 또는 데이터 없음 처리
+                      return Text("선반 없음", style: TextStyle(fontSize: 20, color: Colors.black)); // 오류 또는 데이터 없음 처리
                     }
 
+                    // 데이터를 정렬된 순서로 가져옴
                     final shelves = snapshot.data!;
+                    shelves.sort((a, b) => a['shelfName'].compareTo(b['shelfName'])); // 이름으로 정렬
+
                     return DropdownButton<String>(
                       underline: SizedBox.shrink(), // 밑줄 제거
                       iconSize: 20, // 아이콘 크기 설정

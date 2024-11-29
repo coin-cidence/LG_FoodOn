@@ -345,6 +345,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                             },*/
                           child: GestureDetector(
                             onTap: () {
+                              print('선택된 선반 Serial: $shelfSerial'); // 값 출력
                               if (shelfSerial != null) {
                                 Navigator.push(
                                   context,
