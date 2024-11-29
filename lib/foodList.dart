@@ -377,9 +377,17 @@ class _FoodListPageState extends State<FoodListPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => FoodDetailPage(),
+                  builder: (context) => FoodDetailPage(), // FoodDetailPage로 이동
                 ),
-              );
+              ).then((deletedFoodName) { // 나린 추가한 부분 - FoodDetailPage에서 삭제 시 삭제
+                if (deletedFoodName != null) {
+                  setState(() {
+                    // 삭제된 식품명을 기준으로 데이터 제거
+                    allFoodData.removeWhere((food) => food['foodName'] == deletedFoodName);
+                    filteredFoodData.removeWhere((food) => food['foodName'] == deletedFoodName);
+                  });
+                }
+              });
             },
             backgroundColor: Colors.transparent,
             child: Container(

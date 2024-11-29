@@ -313,6 +313,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             onPressed: _showBottomSheet,
           ),
+          SizedBox(width: 10),
           IconButton(
             icon: Image.asset(
               'images/image_home/bell.png',
@@ -328,6 +329,7 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
+          SizedBox(width: 4),
           IconButton(
             icon: Image.asset(
               'images/image_home/dots.png',
