@@ -357,7 +357,7 @@ class _FoodListPageState extends State<FoodListPage> {
             ),
             Spacer(), // 왼쪽과 오른쪽 정렬을 위한 Spacer
             IconButton(
-              icon: Icon(Icons.add), //새 식품 적재 로직
+              icon: Icon(Icons.refresh), //새 식품 적재 로직
               onPressed: _uploadNewFood,
             ),
             IconButton(
