@@ -18,6 +18,7 @@ class FoodListPage extends StatefulWidget {
 
 class _FoodListPageState extends State<FoodListPage> {
   final FirestoreService firestoreService = FirestoreService();
+  final TextEditingController _searchController = TextEditingController();
 
   late String selectedShelf;
   late String selectedShelfSerial;
@@ -243,6 +244,22 @@ class _FoodListPageState extends State<FoodListPage> {
 
 
 
+  // 검색 로직
+  void _searchFood(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        filteredFoodData = List.from(allFoodData); // 검색어 없으면 전체 데이터 표시
+      } else {
+        filteredFoodData = allFoodData
+            .where((food) =>
+            food['food_name'].toString().toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+    });
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -345,7 +362,9 @@ class _FoodListPageState extends State<FoodListPage> {
             ),
             IconButton(
               icon: Icon(Icons.search),
-              onPressed: () {},
+              onPressed: () {
+                _showSearchDialog();
+              },
             ),
             IconButton(
               key: infoButtonKey,
@@ -377,6 +396,33 @@ class _FoodListPageState extends State<FoodListPage> {
             ),
         ],
       ),
+    );
+  }
+
+  // 검색 다이얼로그
+  void _showSearchDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('식품명을 입력하세요'),
+          content: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(hintText: '식품 이름 입력'),
+            onChanged: (value) {
+              _searchFood(value); // 검색 로직 호출
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // 다이얼로그 닫기
+              },
+              child: Text('확인'),
+            ),
+          ],
+        );
+      },
     );
   }
 
