@@ -50,8 +50,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
           ? (foodData['food_expiration_date'] as Timestamp).toDate().toIso8601String()
           : '',
     );
-    isExpiryToggle = foodData['food_is_expiry'] ?? false;
-    isNotificationToggle = foodData['food_is_notif'] ?? true;
+    isExpiryToggle = foodData['food_expir_notif'] ?? false;
+    isNotificationToggle = foodData['food_unused_notif'] ?? true;
 
     // 안내 메시지 초기화
     notificationMessage = "$foodUnusedNotifPeriod 이상 사용하지 않으면 알림을 받아요.";
@@ -78,8 +78,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         'food_expiration_date': foodExpirationDate.text.isNotEmpty
             ? DateTime.parse(foodExpirationDate.text) // 문자열을 DateTime으로 변환
             : null,
-        'food_is_expiry': isExpiryToggle,
-        'food_is_notif': isNotificationToggle,
+        'food_expir_notif': isExpiryToggle,
+        'food_unused_notif': isNotificationToggle,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(

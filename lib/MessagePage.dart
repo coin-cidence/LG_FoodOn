@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'firestore_service.dart';
 
 class MessagePage extends StatefulWidget {
   final List<Map<String, dynamic>> messages;

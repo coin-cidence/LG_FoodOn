@@ -4,6 +4,8 @@ import 'deviceSelectionPage.dart';
 import 'MessagePage.dart';
 import 'widgets/my_custom_container.dart';
 import 'dummy_data.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'firestore_service.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -14,76 +16,74 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isPowerOn = true; // 냉장고 전원 상태
   List<Map<String, dynamic>> devices = []; // 디바이스 목록
   List<Map<String, dynamic>> messages = [];
+  List<String> selectedDevices = []; // 추가된 기기 이름 리스트
 
 
 
   @override
   void initState() {
     super.initState();
-    _loadMessages(); // 메시지 초기화
+    _loadMessages("SSS123456"); // 메시지 초기화
   }
 
-  void _loadMessages() {
-    final foodData = DummyData.getFoodManagementData(); // 더미 데이터 가져오기
+  void _loadMessages(String shelfSerial) async {
+    final firestoreService = FirestoreService();
+    List<Map<String, dynamic>> foodData = await firestoreService.fetchFoodManagementData(shelfSerial);
     List<Map<String, dynamic>> newMessages = []; // 새로운 메시지 리스트
 
-    for (var food in foodData) {
-      // 장기 미사용 알림
-      if (food['foodWeight'] != 0 && food["foodIsNotif"] == true) {
-        // 'foodWeightUpdateTime'부터 'foodUnusedNotifPeriod'만큼 시간이 경과했을 때 알림 생성
-        DateTime lastUpdatedTime = DateTime.parse(food['foodWeightUpdateTime']);
-        DateTime notifTime = lastUpdatedTime.add(Duration(days: food['foodUnusedNotifPeriod']));
+    // 경과 시간 포맷 함수
+    String _formatNotificationTime(Duration difference) {
+      if (difference.inDays >= 1) {
+        return DateFormat('MM월 dd일').format(DateTime.now().subtract(difference)); // 1일 이상 경과 시 날짜 형식
+      } else if (difference.inHours > 0) {
+        return '${difference.inHours}시간 전'; // 1일 미만, 시간 단위
+      } else {
+        return '${difference.inMinutes}분 전'; // 1일 미만, 분 단위
+      }
+    }
 
-        // 현재 시간이 알림 시간이랑 일치할 경우 알림
-        if (DateTime.now().isAfter(notifTime) && DateTime.now().difference(notifTime).inDays >= 0) {
-          // 경과 시간 계산
-          Duration difference = DateTime.now().difference(notifTime);
-          String timeAgo = _formatNotificationTime(difference);
+    foodData.forEach((food) {
+      // 장기 미사용 알림
+      if (food['foodWeight'] != 0 && food['unusedNotif'] == true) {
+        final lastUpdatedTime = food['weightUpdateTime'] is DateTime
+            ? food['weightUpdateTime']
+            : (food['weightUpdateTime'] as Timestamp).toDate();
+
+        final notifTime = lastUpdatedTime.add(Duration(days: food['unusedNotifPeriod']));
+
+        if (DateTime.now().isAfter(notifTime) &&
+            DateTime.now().difference(notifTime).inDays >= 0) {
+          final difference = DateTime.now().difference(notifTime);
+          final timeAgo = _formatNotificationTime(difference);
 
           newMessages.add({
             'content': '" ${food['foodName']} " ! 잊으신 건 아니죠...?',
-            // 'timeAgo':timeAgo,
-            'time': notifTime // 현재 시간으로 설정
+            'time': notifTime,
           });
         }
       }
-
       // 유통기한 알림
-      if (food['foodExpirationDate'] != null && food["foodIsNotif"] == true) {
-        DateTime today = DateTime.now();
-        DateTime expirationNotifDate = DateTime(
-          DateTime.parse(food['foodExpirationDate']).year,
-          DateTime.parse(food['foodExpirationDate']).month,
-          DateTime.parse(food['foodExpirationDate']).day - 1,
-        );
+      if (food['expirDate'] != null && food['expirNotif'] == true) {
+        final expirationDate = food['expirDate'] is DateTime
+            ? food['expirDate']
+            : (food['expirDate'] as Timestamp).toDate();
 
-        if (today.year == expirationNotifDate.year &&
-            today.month == expirationNotifDate.month &&
-            today.day >= expirationNotifDate.day) {
+        final expirationNotifDate = expirationDate.subtract(Duration(days: 1));
+
+        if (DateTime.now().isAfter(expirationNotifDate)) {
           newMessages.add({
             'content': '" ${food['foodName']} " 유통기한이 하루 남았어요.',
             'time': expirationNotifDate,
           });
         }
       }
-    }
 
     setState(() {
       messages = newMessages; // 생성된 메시지를 상태에 반영
     });
   }
-
-// 경과 시간 포맷 함수
-  String _formatNotificationTime(Duration difference) {
-    if (difference.inDays >= 1) {
-      return DateFormat('MM월 dd일').format(DateTime.now().subtract(difference)); // 1일 이상 경과 시 날짜 형식
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours}시간 전'; // 1일 미만, 시간 단위
-    } else {
-      return '${difference.inMinutes}분 전'; // 1일 미만, 분 단위
-    }
-  }
-
+ );
+}
 
 
   // Bottom Sheet 표시
@@ -396,7 +396,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: 21,
                   height: 21,
                 ),
-                if (messages.length > 0) // 메시지가 있을 때만 뱃지를 표시
+                if (messages.length > 0 && selectedDevices.contains('푸디온')) // 메시지가 있을 때만 뱃지를 표시
                   Positioned(
                     right: -8,
                     top: -7,
@@ -688,7 +688,14 @@ class _HomeScreenState extends State<HomeScreen> {
       VoidCallback onTap,
       ) {
     return GestureDetector(
-      onTap: onTap, // 공통 클릭 동작 전달
+      onTap: () {
+        // 선택된 기기를 리스트에 추가하거나 제거
+        setState(() {
+          selectedDevices.add(name);
+        });
+        // 공통 클릭 동작 수행
+        onTap();
+      },
       child: Container(
         decoration: BoxDecoration(
           color: isPowerOn ? Colors.white : Colors.white.withOpacity(0.5), // 투명도 조정

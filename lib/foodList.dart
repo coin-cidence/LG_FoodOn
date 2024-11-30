@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'FoodDetailPage.dart';
 import 'info_dialog.dart';
 import 'firestore_service.dart';
+import 'dummy_data1.dart';
 
 
 class FoodListPage extends StatefulWidget {
@@ -16,6 +17,9 @@ class FoodListPage extends StatefulWidget {
 }
 
 class _FoodListPageState extends State<FoodListPage> {
+  final FirestoreService firestoreService = FirestoreService();
+  final TextEditingController _searchController = TextEditingController();
+
   late String selectedShelf;
   late String selectedShelfSerial;
   String? shelfName;
@@ -24,7 +28,6 @@ class _FoodListPageState extends State<FoodListPage> {
   List<Map<String, int>> highlightedLocations = [];
   bool _isInfoVisible = false;
   GlobalKey infoButtonKey = GlobalKey();
-  final FirestoreService firestoreService = FirestoreService();
   String selectedFilter = "가나다순"; // 기본 필터값
 
   @override
@@ -40,6 +43,7 @@ class _FoodListPageState extends State<FoodListPage> {
 
   // Firestore에서 선반 이름 가져오기
   Future<void> fetchShelfName(String shelfSerial) async {
+    if (shelfName != null) return; // 이미 로드된 경우 중단
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('SMART_SHELF')
@@ -101,6 +105,36 @@ class _FoodListPageState extends State<FoodListPage> {
     } catch (e) {
       print("Error fetching food data: $e");
       _showNoDataDialog();
+    }
+  }
+
+  Future<void> _uploadNewFood() async {
+    try {
+      // DummyData에서 첫 번째 아이템 가져오기
+      Map<String, dynamic>? foodData = DummyData.getFoodManagementData()[0];
+      Map<String, dynamic>? logData = DummyData.getFoodManagementLogData()[0];
+
+      if (foodData != null) {
+        // FOOD_MANAGEMENT에 데이터 추가
+        await firestoreService.addDocument('FOOD_MANAGEMENT', foodData);
+      }
+
+      if (logData != null) {
+        // FOOD_MANAGEMENT_LOG에 데이터 추가
+        await firestoreService.addDocument('FOOD_MANAGEMENT_LOG', logData);
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('새 식품이 추가되었습니다!')),
+      );
+
+      await _fetchAllFoodData(selectedShelfSerial); //다시 식품 상태 로드
+
+    } catch (e) {
+      print("Error uploading dummy data: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('데이터 업로드 중 오류가 발생했습니다.')),
+      );
     }
   }
 
@@ -199,13 +233,29 @@ class _FoodListPageState extends State<FoodListPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // 데이터가 비어 있다면 다이얼로그를 호출
+    //데이터가 비어 있다면 다이얼로그를 호출
     if (allFoodData.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         print('너 뭔데');
         _showNoDataDialog();
       });
     }
+  }
+
+
+
+  // 검색 로직
+  void _searchFood(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        filteredFoodData = List.from(allFoodData); // 검색어 없으면 전체 데이터 표시
+      } else {
+        filteredFoodData = allFoodData
+            .where((food) =>
+            food['food_name'].toString().toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+    });
   }
 
 
@@ -263,6 +313,7 @@ class _FoodListPageState extends State<FoodListPage> {
                   },
                 ),*/
                 child: FutureBuilder<List<Map<String, dynamic>>>(
+
                   future: firestoreService.fetchSmartShelvesData(selectedShelfSerial), // Firestore에서 데이터 로드
                   builder: (context, snapshot) {
                     print('헤이전달된 selectedShelfSerial: $selectedShelfSerial');
@@ -306,12 +357,14 @@ class _FoodListPageState extends State<FoodListPage> {
             ),
             Spacer(), // 왼쪽과 오른쪽 정렬을 위한 Spacer
             IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {},
+              icon: Icon(Icons.refresh), //새 식품 적재 로직
+              onPressed: _uploadNewFood,
             ),
             IconButton(
               icon: Icon(Icons.search),
-              onPressed: () {},
+              onPressed: () {
+                _showSearchDialog();
+              },
             ),
             IconButton(
               key: infoButtonKey,
@@ -343,6 +396,33 @@ class _FoodListPageState extends State<FoodListPage> {
             ),
         ],
       ),
+    );
+  }
+
+  // 검색 다이얼로그
+  void _showSearchDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('식품명을 입력하세요'),
+          content: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(hintText: '식품 이름 입력'),
+            onChanged: (value) {
+              _searchFood(value); // 검색 로직 호출
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // 다이얼로그 닫기
+              },
+              child: Text('확인'),
+            ),
+          ],
+        );
+      },
     );
   }
 
