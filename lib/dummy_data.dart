@@ -95,7 +95,7 @@ class DummyData {
         "foodExpirationDate": null,
         "foodUnusedNotifPeriod": 3,
         "foodIsNotif": true,
-        "foodWeightUpdateTime": DateTime(2024, 11, 25, 10, 0, 0).toIso8601String(),
+        "foodWeightUpdateTime": DateTime(2024, 11, 25, 20, 0, 0).toIso8601String(),
       },
       {
         "smartShelfSerial": "6879ZASD123456",
@@ -171,6 +171,21 @@ class DummyData {
         "foodIsNotif": true,
         "foodWeightUpdateTime": DateTime(2024, 11, 16, 9, 0, 0).toIso8601String(),
       },
+      {
+        "smartShelfSerial": "6879ZASD123456",
+        "foodName": "요거트",
+        "foodWeight": 200,
+        "foodLocation": [
+          {"x": 3, "y": 5}, {"x": 3, "y": 6}, {"x": 3, "y": 7},
+          {"x": 4, "y": 5}, {"x": 4, "y": 6}, {"x": 4, "y": 7}
+        ],
+        "foodRegisterDate": DateTime(2024, 11, 28, 09, 00, 00).toIso8601String(),  // 코드 그대로 사용
+        "foodExpirationDate": DateTime(2024, 11, 30, 12, 00, 00).toIso8601String(),  // 코드 그대로 사용
+        "foodUnusedNotifPeriod": 2,
+        "foodIsNotif": true, //유통기한이랑 장기미사용 알림 여부 변수를 별도로 해야함...
+        "foodWeightUpdateTime":DateTime(2024, 11, 28, 12, 00, 00).toIso8601String() // 코드 그대로 사용
+      }
+
     ];
   }
 

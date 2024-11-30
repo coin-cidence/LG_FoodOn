@@ -11,11 +11,19 @@ class MessagePage extends StatefulWidget {
 }
 
 class _MessagePageState extends State<MessagePage> {
-  String shelfLocation = "선반 1";
+  // String shelfLocation = "선반 1";
+
+  // 대한민국 시간(KST)으로 변환하는 함수
+  DateTime convertToKST(DateTime dateTime) {
+    final koreaTimeZoneOffset = Duration(hours: 9); // KST는 UTC+9
+    return dateTime.toUtc().add(koreaTimeZoneOffset);
+  }
 
   String formatNotificationTime(DateTime time) {
-    final now = DateTime.now();
+    final now = convertToKST(DateTime.now()); // 실시간 대한민국 시간
     final difference = now.difference(time);
+
+    print("현재시간:$now 받은 시간:$time 차이는: $difference");
 
     if (difference.inDays >= 1) {
       return DateFormat('MM월 dd일').format(time);
@@ -28,6 +36,13 @@ class _MessagePageState extends State<MessagePage> {
 
   @override
   Widget build(BuildContext context) {
+    // 메시지 리스트를 시간 순으로 정렬
+    widget.messages.sort((a, b) {
+      DateTime timeA = a['time'];
+      DateTime timeB = b['time'];
+      return timeB.compareTo(timeA); // 내림차순 정렬
+    });
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -40,12 +55,15 @@ class _MessagePageState extends State<MessagePage> {
           },
         ),
         title: Text(
-          shelfLocation,
+          "홈",
           style: TextStyle(
+            fontFamily: 'LGText',
             fontSize: 18,
             color: Colors.black,
+            fontWeight: FontWeight.bold, // 글자를 볼드로 설정
           ),
         ),
+
         titleSpacing: 0,
       ),
       body: Container(
@@ -66,6 +84,7 @@ class _MessagePageState extends State<MessagePage> {
                 child: Text(
                   '알림',
                   style: TextStyle(
+                    fontFamily: 'LGText',
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
@@ -77,23 +96,45 @@ class _MessagePageState extends State<MessagePage> {
               children: [
                 if (widget.messages.isNotEmpty)
                   ...widget.messages.map((message) {
-                    return Card(
-                      elevation: 0,
-                      margin: EdgeInsets.symmetric(vertical: 3.0, horizontal: 16.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      color: Colors.white,
-                      child: ListTile(
-                        title: Text(
-                          message['content'],
-                          style: TextStyle(fontSize: 15),
+                    return Stack(
+                      children: [
+                        Card(
+                          elevation: 0,
+                          margin: EdgeInsets.symmetric(vertical: 3.0, horizontal: 16.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          color: Colors.white,
+                          child: ListTile(
+                            contentPadding: EdgeInsets.only(
+                              top:12.0,
+                              // bottom: 8.0,
+                              left: 20.0,
+                              right: 20.0,
+                            ),
+                            title: Text(
+                              message['content'],
+                              style: TextStyle(fontSize: 15),
+                            ),
+                            trailing: Text(
+                              formatNotificationTime(message['time']),
+                              style: TextStyle(fontFamily: 'LGText',fontSize: 12, color: Colors.grey),
+                            ),
+                          ),
                         ),
-                        trailing: Text(
-                          formatNotificationTime(message['time']),
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        Positioned(
+                          top: 10, // 카드의 상단에서 간격 조정
+                          left: 40, // 카드의 왼쪽에서 간격 조정
+                          child: Text(
+                            "푸디온",
+                            style: TextStyle(
+                              fontFamily: 'LGText',
+                              fontSize: 13,
+                              color: Colors.black.withOpacity(0.5), // 희미하게 표시
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     );
                   }).toList()
                 else
@@ -106,12 +147,13 @@ class _MessagePageState extends State<MessagePage> {
                           Text(
                             '현재 알림이 없습니다.',
                             style: TextStyle(
+                              fontFamily: 'LGText',
                               fontSize: 18,
                               color: Colors.grey,
                             ),
                           ),
                         ],
-                      )
+                      ),
                     ),
                   ),
               ],
