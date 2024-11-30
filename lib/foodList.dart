@@ -8,66 +8,70 @@ import 'firestore_service.dart';
 
 class FoodListPage extends StatefulWidget {
   final String shelfSerial;
+  final String fridgeSerial;
 
-  FoodListPage({required this.shelfSerial});
+  FoodListPage({required this.shelfSerial, required this.fridgeSerial});
 
   @override
   _FoodListPageState createState() => _FoodListPageState();
 }
 
 class _FoodListPageState extends State<FoodListPage> {
-  late String selectedShelf;
   late String selectedShelfSerial;
   String? shelfName;
   List<Map<String, dynamic>> allFoodData = []; // 전체 데이터를 저장
   List<Map<String, dynamic>> filteredFoodData = []; // 필터된 데이터를
-  List<Map<String, int>> highlightedLocations = [];
+  List<Map<String, dynamic>> highlightedLocations = [];
   bool _isInfoVisible = false;
   GlobalKey infoButtonKey = GlobalKey();
-  final FirestoreService firestoreService = FirestoreService();
+  final FirestoreService _firestoreService = FirestoreService();
   String selectedFilter = "가나다순"; // 기본 필터값
+  List<Map<String, dynamic>> smartShelves = []; // 모든 선반 데이터를 저장
+  bool _isDialogShowing = false; // 다이얼로그 표시 여부 플래그 추가
+  bool _isFetching = false; // 데이터를 가져오는 중인지 여부 플래그 추가
 
   @override
   void initState() {
     super.initState();
     selectedShelfSerial = widget.shelfSerial;
-    print('목록에 ShelfSerial: $selectedShelfSerial'); // 값 출력
-
-    fetchShelfName(selectedShelfSerial);
+    print('_FoodListPageState로 넘어온 ShelfSerial: $selectedShelfSerial');
+    fetchSmartShelvesData(widget.fridgeSerial); // 모든 선반 데이터 가져오기
     _fetchAllFoodData(selectedShelfSerial);
-    // _applyFilter(selectedFilter);
   }
 
-  // Firestore에서 선반 이름 가져오기
-  Future<void> fetchShelfName(String shelfSerial) async {
+  // Firestore에서 모든 선반 데이터 가져오기
+  Future<void> fetchSmartShelvesData(String fridgeSerial) async {
     try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('SMART_SHELF')
-          .where('smart_shelf_serial', isEqualTo: shelfSerial)
-          // .orderBy('smart_shelf_name') // 이름으로 정렬
-          .get();
+      final shelves = await _firestoreService.fetchSmartShelvesData(widget.fridgeSerial);
+      print('fetchSmartShelvesData SMART_SHELF 데이터: ${shelves.length}개');
 
-      if (snapshot.docs.isNotEmpty) {
-        setState(() {
-          shelfName = snapshot.docs.first['smart_shelf_name'];
-          print('선반 이름: $shelfName');
-        });
-      } else {
-        setState(() {
-          shelfName = "이름 없음";
-          print('SMART_SHELF에 데이터가 없음');
-        });
-      }
-    } catch (e) {
-      print("Error fetching shelf name: $e");
       setState(() {
-        shelfName = "오류 발생";
+        smartShelves = shelves;
+
+        if (smartShelves.isNotEmpty) {
+          // 전달받은 shelfSerial로 초기 선택값 설정
+          final initialShelf = smartShelves.firstWhere(
+                (shelf) => shelf['ShelfSerial'] == widget.shelfSerial,
+            orElse: () => smartShelves.first,
+          );
+          shelfName = initialShelf['shelfName'];
+          selectedShelfSerial = initialShelf['ShelfSerial'];
+
+          // 초기 데이터를 가져옴
+          _fetchAllFoodData(selectedShelfSerial);
+        }
       });
+    } catch (e) {
+      print("Error fetching smart shelves data: $e");
     }
   }
 
   // 모든 데이터를 한 번만 가져옴
   Future<void> _fetchAllFoodData(String shelfSerial) async {
+    if (_isFetching) {
+      return; // 이미 데이터를 가져오는 중이면 함수 종료
+    }
+    _isFetching = true;
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('FOOD_MANAGEMENT')
@@ -98,10 +102,21 @@ class _FoodListPageState extends State<FoodListPage> {
         // 데이터가 설정된 후에만 필터 적용
         _applyFilter(selectedFilter);
       });
+
+      // 데이터를 가져온 후 비어있는 경우 다이얼로그 호출
+      if (allFoodData.isEmpty && !_isDialogShowing) {
+        _showNoDataDialog();
+      }
     } catch (e) {
       print("Error fetching food data: $e");
-      _showNoDataDialog();
-    }
+      // 예외가 발생한 경우에만 다이얼로그 호출
+      // 예외가 발생한 경우에만 다이얼로그 호출
+      if (!_isDialogShowing) {
+        _showNoDataDialog();
+      }
+    } finally {
+      _isFetching = false; // 데이터 가져오기 완료 후 플래그 초기화
+      }
   }
 
   void _applyFilter(String filter) {
@@ -174,41 +189,36 @@ class _FoodListPageState extends State<FoodListPage> {
   }
 
   void _showNoDataDialog() {
-      showDialog(
-        barrierDismissible: true,
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            backgroundColor: Colors.white,  // 배경색을 하얀색으로 설정
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),  // 모서리를 둥글게 만드는 부분
+    if (_isDialogShowing) return; // 이미 다이얼로그가 표시 중이면 함수 종료
+
+    _isDialogShowing = true;
+
+    showDialog(
+      barrierDismissible: true,
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.white, // 배경색을 하얀색으로 설정
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5), // 모서리를 둥글게 만드는 부분
+          ),
+          title: Text("식품을 등록하세요!"),
+          content: Text("식품을 등록하면 선반에 표시됩니다."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() {
+                  _isDialogShowing = false; // 다이얼로그가 닫힐 때 플래그 초기화
+                });
+              },
+              child: Text("확인"),
             ),
-            title: Text("식품을 등록하세요!"),
-            content: Text("식품을 등록하면 선반에 표시됩니다."),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text("확인"),
-              ),
-            ],
-          );
-        },
-      );
-    }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // 데이터가 비어 있다면 다이얼로그를 호출
-    if (allFoodData.isEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        print('너 뭔데');
-        _showNoDataDialog();
-      });
-    }
+          ],
+        );
+      },
+    );
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -234,72 +244,54 @@ class _FoodListPageState extends State<FoodListPage> {
               offset: Offset(-30, 0), // 왼쪽으로 30 이동
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8), // 내부 여백
-                /*child: DropdownButton<String>(
+                  // 모든 선반 데이터 가져오기
+                child: DropdownButton<String>(
+                  // 모든 선반 데이터 가져오기
                   underline: SizedBox.shrink(), // 밑줄 제거
                   iconSize: 20, // 아이콘 크기 설정
-
-                  // 데이터를 정렬된 순서로 가져옴
-                  final shelves = snapshot.data!;
-                  shelves.sort((a, b) => a['shelfName'].compareTo(b['shelfName'])); // 이름으로 정렬
-
-                  value: shelfName,
-                  items: shelves.map((selectedShelfSerial) {
-                    return DropdownMenuItem<String>(
-                      value:
-                      '${shelfName}',
-                      child: Text(
-                        '${shelfName}',
-                        style: TextStyle(color: Colors.black), // 드롭다운 텍스트 색상 설정
+                  value: shelfName ?? "선반 없음", // 현재 선택된 선반 이름 표시. 만약 shelfName이 null이면 기본값으로 "선반 없음" 사용
+                  items: () {
+                    // 데이터를 정렬된 순서로 가져옴
+                    smartShelves.sort((a, b) => a['shelfName'].toString().compareTo(b['shelfName'].toString())); // 이름으로 정렬
+                    return smartShelves.isNotEmpty
+                        ? smartShelves.map((shelf) {
+                      return DropdownMenuItem<String>(
+                        value: shelf['shelfName'],
+                        child: Text(
+                          shelf['shelfName'], // 드롭다운 텍스트
+                          style: TextStyle(color: Colors.black), // 드롭다운 텍스트 색상 설정
+                        ),
+                      );
+                    }).toList()
+                        : [
+                      DropdownMenuItem<String>(
+                        value: "선반 없음",
+                        child: Text(
+                          "선반 없음",
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ),
-                    );
-                  }).toList(),
+                    ];
+                  }(),
                   dropdownColor: Color(0xFFFFFFFF),
                   onChanged: (value) {
-                    setState(() {
-                      shelfName = value!;
-                      highlightedLocations = [];
-                      filteredFoodData = List.from(allFoodData);
-                    });
-                  },
-                ),*/
-                child: FutureBuilder<List<Map<String, dynamic>>>(
-                  future: firestoreService.fetchSmartShelvesData(selectedShelfSerial), // Firestore에서 데이터 로드
-                  builder: (context, snapshot) {
-                    print('헤이전달된 selectedShelfSerial: $selectedShelfSerial');
-
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(); // 로딩 중 표시
-                    }
-                    if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Text("선반 없음", style: TextStyle(fontSize: 20, color: Colors.black)); // 오류 또는 데이터 없음 처리
-                    }
-
-                    // 데이터를 정렬된 순서로 가져옴
-                    final shelves = snapshot.data!;
-                    shelves.sort((a, b) => a['shelfName'].compareTo(b['shelfName'])); // 이름으로 정렬
-
-                    return DropdownButton<String>(
-                      underline: SizedBox.shrink(), // 밑줄 제거
-                      iconSize: 20, // 아이콘 크기 설정
-                      value: shelfName,
-                      items: shelves.map((shelf) {
-                        return DropdownMenuItem<String>(
-                          value: shelf['shelfName'],
-                          child: Text(
-                            shelf['shelfName'], // 드롭다운 텍스트
-                            style: TextStyle(color: Colors.black), // 드롭다운 텍스트 색상 설정
-                          ),
+                    if (value != null && value != "선반 없음") {
+                      setState(() {
+                        shelfName = value;
+                        final selectedShelf = smartShelves.firstWhere(
+                              (shelf) => shelf['shelfName'] == value,
                         );
-                      }).toList(),
-                      dropdownColor: Color(0xFFFFFFFF),
-                      onChanged: (value) {
-                        setState(() {
-                          shelfName = value!; // 선택된 선반 이름 업데이트
-                          highlightedLocations = [];
-                          filteredFoodData = List.from(allFoodData); // 필요한 데이터 업데이트
-                        });
-                      },
-                    );
+                        selectedShelfSerial = selectedShelf['ShelfSerial'];
+
+                        // 선택된 선반의 데이터를 다시 가져오기 전에 기존 데이터를 초기화
+                        highlightedLocations = [];
+                        filteredFoodData = [];
+                        allFoodData = [];
+
+                        // 새로운 선반의 데이터를 가져오기
+                        _fetchAllFoodData(selectedShelfSerial);
+                      });
+                    }
                   },
                 ),
               ),
@@ -404,7 +396,7 @@ class _FoodListPageState extends State<FoodListPage> {
                           highlightedLocations = [];
                           filteredFoodData = List.from(allFoodData);
                         } else {
-                          highlightedLocations = List<Map<String, int>>.from(selectedFood['food_location']);
+                          highlightedLocations = List.from(selectedFood['food_location']);
                           filteredFoodData = allFoodData.where((food) {
                             return food['food_location'].any((loc) =>
                                 highlightedLocations.any((highlightedLoc) =>
@@ -509,8 +501,6 @@ class _FoodListPageState extends State<FoodListPage> {
   }
 
   Widget _buildFoodListItem(Map<String, dynamic> food, int index) {
-    double listItemWidth = double.infinity; // 초기 너비 값
-
     return Slidable(
       key: ValueKey(food['food_name']),
       endActionPane: ActionPane(
@@ -523,7 +513,7 @@ class _FoodListPageState extends State<FoodListPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => FoodDetailPage(foodData: {},),
+                    builder: (context) => FoodDetailPage(foodData: food),
                   ),
                 ).then((deletedFoodName) { // 나린 추가한 부분 - FoodDetailPage에서 삭제 시 삭제
                   if (deletedFoodName != null) {
@@ -562,7 +552,7 @@ class _FoodListPageState extends State<FoodListPage> {
               highlightedLocations.removeWhere((loc) => food['food_location'].contains(loc));
             } else {
               // 포함되어 있지 않다면 하이라이트 추가
-              highlightedLocations = List<Map<String, int>>.from(food['food_location']);
+              highlightedLocations = List.from(food['food_location']);
             }
           });
         },

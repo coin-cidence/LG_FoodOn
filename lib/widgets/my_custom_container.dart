@@ -3,6 +3,7 @@ import 'package:flutter_gradient_animation_text/flutter_gradient_animation_text.
 import '../foodList.dart';  // 새 화면을 임포트
 import '../firestore_service.dart'; // FirestoreService 임포트
 import 'package:avatar_glow/avatar_glow.dart';
+
 class MyCustomContainer extends StatefulWidget {
   @override
   _MyCustomContainerState createState() => _MyCustomContainerState();
@@ -12,13 +13,41 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
   final FirestoreService _firestoreService = FirestoreService();
   String? shelfSerial;
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchShelfSerial(); // Firestore에서 데이터 가져오기
+  Future<void> _onShelfTap(BuildContext context, String fridgeSerial, String shelfName) async {
+    try {
+      // Firestore에서 특정 선반 데이터를 가져오기
+      final shelves = await _firestoreService.fetchSmartShelvesData(fridgeSerial);
+      final matchingShelf = shelves.firstWhere(
+            (shelf) => shelf['shelfName'] == shelfName,
+        orElse: () => {},  // 빈 맵 반환
+      );
+
+      if (matchingShelf.isNotEmpty && matchingShelf['ShelfSerial'] != null) {
+        String shelfSerial = matchingShelf['ShelfSerial'];
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FoodListPage(
+              shelfSerial: shelfSerial, // Firestore 데이터 사용
+              fridgeSerial: fridgeSerial,
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("선반 데이터를 불러오는 중입니다.")),
+        );
+      }
+    } catch (e) {
+      print("Error fetching shelf data: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("선반 데이터를 로드하는 중 오류가 발생했습니다.")),
+      );
+    }
   }
 
-  Future<void> _fetchShelfSerial() async {
+
+  /*Future<void> _fetchShelfSerial() async {
     try {
       // Firestore에서 모든 SMART_SHELF 데이터를 가져오기
       final shelves = await _firestoreService.fetchSmartShelvesData("6879ZASD123456");
@@ -49,12 +78,116 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
         SnackBar(content: Text("선반 데이터를 로드하는 중 오류가 발생했습니다.")),
       );
     }
-  }
+  }*/
 
+  /*@override
+  void initState() {
+    super.initState();
+    // _fetchShelfSerial(); // Firestore에서 데이터 가져오기
+  }
+*/
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     // 여기서 context를 사용해도 안전합니다.
+  }
+
+  void showCustomAlertDialog({required BuildContext context, required String message, required VoidCallback onMove, }) {
+    showDialog(
+      context: context,
+      barrierDismissible: true, // 다이얼로그 외부 클릭 시 다이얼로그 닫기 가능
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          backgroundColor: Colors.white,  // 배경색을 하얀색으로 설정
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),  // 모서리를 둥글게 만드는 부분
+          ),
+          title: Padding(
+            padding: const EdgeInsets.only(top: 30.0),  // 이모티콘을 아래로 내리기
+            child: Center(  // 중앙 정렬을 위한 Center 위젯 사용
+              child: Image.asset(
+                'images/thinking.png',  // thinking.png 이미지 로드
+                height: 50,  // 이미지 크기 조정
+              ),
+            ),
+          ),
+          content: Container(
+            width: 180,  // AlertDialog 크기 설정 (너비)
+            height: 50,  // AlertDialog 크기 설정 (높이)
+            child: Padding(
+              padding: const EdgeInsets.only(top: 27.0),  // 텍스트를 아래로 내리기
+              child: Center(
+                child: Text(
+                  message,
+                  textAlign: TextAlign.center,  // 텍스트 중앙 정렬
+                  style: TextStyle(
+                    fontFamily: 'LGText',  // 폰트 설정
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,  // 텍스트 굵게 설정
+                    color: Colors.black,  // 텍스트 색상을 검정색으로 설정
+                  ),
+                ),
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,  // 버튼 중앙 정렬
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 1.0),  // 버튼 간격을 아래로 조정
+                  child: TextButton(
+                    onPressed: () {
+                      onMove(); // 페이지 이동 함수 호출
+                      Navigator.of(dialogContext).pop(); // 다이얼로그 닫기
+                    },
+                    child: Text(
+                      '닫기',
+                      style: TextStyle(
+                        fontFamily: 'LGText',  // 폰트 지정
+                        fontSize: 16,           // 폰트 크기 (필요에 맞게 수정)
+                        fontWeight: FontWeight.w500,  // 폰트 굵기 (필요에 맞게 수정)
+                        color: Colors.black87,  // 버튼 텍스트 색상을 검정색으로 설정
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 50),  // 버튼 간격 조정
+                Padding(
+                  padding: const EdgeInsets.only(top: 1.0),  // 버튼 간격을 아래로 조정
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop(); // 다이얼로그 닫기
+                      Future.delayed(Duration(milliseconds: 200), () {
+                        onMove(); // 페이지 이동 함수 호출
+                      });
+                      // 페이지 이동 함수 호출
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(Colors.blue), // 버튼 배경색 설정
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0), // 버튼 모서리 둥글게
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      '이동',
+                      style: TextStyle(
+                        fontFamily: 'LGText',  // 폰트 지정
+                        fontSize: 16,           // 폰트 크기 (필요에 맞게 수정)
+                        fontWeight: FontWeight.w500,  // 폰트 굵기 (필요에 맞게 수정)
+                        color: Colors.white,  // 버튼 텍스트 색상을 설정
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -189,10 +322,10 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
 
 
           // 선반 1 ~ 선반 4 버튼 표시
-          createShelfButton(screenWidth * 0.83, screenHeight * 0.23, '선반 1',0),
-          createShelfButton(screenWidth * 0.83, screenHeight * 0.31, '선반 2',1),
-          createShelfButton(screenWidth * 0.83, screenHeight * 0.38, '선반 3',2),
-          createShelfButton(screenWidth * 0.83, screenHeight * 0.465, '선반 4',3),
+          createShelfButton(screenWidth * 0.83, screenHeight * 0.23, '선반1',0),
+          createShelfButton(screenWidth * 0.83, screenHeight * 0.31, '선반2',1),
+          createShelfButton(screenWidth * 0.83, screenHeight * 0.38, '선반3',2),
+          createShelfButton(screenWidth * 0.83, screenHeight * 0.465, '선반4',3),
 
           // 냉장고 흰선반
           Positioned(
@@ -258,12 +391,6 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
             ),
           ),
 
-          ///////////////////////////////////////////////////////////////////////////////////////////////
-
-          // 새로운 AlertDialog 식 -> 닫기, 확인 선택지 부여함
-
-
-
           // 선반 2
           Positioned(
             left: screenWidth * 0.27,
@@ -271,114 +398,11 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
             child: GestureDetector(
               onTap: () {
                 // 무조건 AlertDialog 표시
-                showDialog(
+                showCustomAlertDialog(
                   context: context,
-                  barrierDismissible: true, // 다이얼로그 외부 클릭 시 다이얼로그 닫기 가능
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      backgroundColor: Colors.white,  // 배경색을 하얀색으로 설정
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),  // 모서리를 둥글게 만드는 부분
-                      ),
-                      title: Padding(
-                        padding: const EdgeInsets.only(top: 30.0),  // 이모티콘을 아래로 내리기
-                        child: Center(  // 중앙 정렬을 위한 Center 위젯 사용
-                          child: Image.asset(
-                            'images/thinking.png',  // thinking.png 이미지 로드
-                            height: 50,  // 이미지 크기 조정
-                          ),
-                        ),
-                      ),
-                      content: Container(
-                        width: 180,  // AlertDialog 크기 설정 (너비)
-                        height: 50,  // AlertDialog 크기 설정 (높이)
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 27.0),  // 텍스트를 아래로 내리기
-                          child: Center(
-                            child: Text(
-                              '등록된 식품이 없습니다!',
-                              textAlign: TextAlign.center,  // 텍스트 중앙 정렬
-                              style: TextStyle(
-                                fontFamily: 'LGText',  // 폰트 설정
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,  // 텍스트 굵게 설정
-                                color: Colors.black,  // 텍스트 색상을 검정색으로 설정
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      actions: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,  // 버튼 중앙 정렬
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 1.0),  // 버튼 간격을 아래로 조정
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();  // AlertDialog 닫기
-                                },
-                                child: Text(
-                                  '닫기',
-                                  style: TextStyle(
-                                    fontFamily: 'LGText',  // 폰트 지정
-                                    fontSize: 16,           // 폰트 크기 (필요에 맞게 수정)
-                                    fontWeight: FontWeight.w500,  // 폰트 굵기 (필요에 맞게 수정)
-                                    color: Colors.black87,  // 버튼 텍스트 색상을 검정색으로 설정
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 50),  // 버튼 간격 조정
-                            Padding(
-                              padding: const EdgeInsets.only(top: 1.0),  // 버튼 간격을 아래로 조정
-                              /*child: TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();  // AlertDialog 닫기
-                                  // 화면 전환
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => FoodListPage(
-                                        shelfSerial: shelvesData[1]['smartShelfSerial'],
-                                      ),
-                                    ),
-                                  );
-                                },*/
-                              child: GestureDetector(
-                                onTap: () {
-                                  print('선택된 선반 Serial: $shelfSerial'); // 값 출력
-                                  if (shelfSerial != null) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => FoodListPage(
-                                          shelfSerial: shelfSerial!, // Firestore 데이터 사용
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    print("선반 Serial 값이 비어있습니다."); // 디버깅용
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text("선반 데이터를 불러오는 중입니다.")),
-                                    );
-                                  }
-                                },
-                                child: Text(
-                                  '이동',
-                                  style: TextStyle(
-                                    fontFamily: 'LGText',  // 폰트 지정
-                                    fontSize: 16,           // 폰트 크기 (필요에 맞게 수정)
-                                    fontWeight: FontWeight.w500,  // 폰트 굵기 (필요에 맞게 수정)
-                                    color: Colors.grey,  // 버튼 텍스트 색상을 검정색으로 설정
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
+                  message: '등록된 식품이 없습니다!',
+                  onMove: () {
+                    _onShelfTap(context, "6879ZASD123456", "선반2");
                   },
                 );
               },
@@ -426,100 +450,12 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
             top: screenHeight * 0.345,
             child: GestureDetector(
               onTap: () {
-                // 선반 3 클릭 시 다른 화면으로 전환 및 AlertDialog 표시
-                showDialog(
+                // 무조건 AlertDialog 표시
+                showCustomAlertDialog(
                   context: context,
-                  barrierDismissible: true, // 다이얼로그 외부 클릭 시 다이얼로그 닫기 가능
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      backgroundColor: Colors.white,  // 배경색을 하얀색으로 설정
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),  // 모서리를 둥글게 만드는 부분
-                      ),
-                      title: Padding(
-                        padding: const EdgeInsets.only(top: 30.0),  // 이모티콘을 아래로 내리기
-                        child: Center(  // 중앙 정렬을 위한 Center 위젯 사용
-                          child: Image.asset(
-                            'images/thinking.png',  // thinking.png 이미지 로드
-                            height: 50,  // 이미지 크기 조정
-                          ),
-                        ),
-                      ),
-                      content: Container(
-                        width: 180,  // AlertDialog 크기 설정 (너비)
-                        height: 50,  // AlertDialog 크기 설정 (높이)
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 27.0),  // 텍스트를 아래로 내리기
-                          child: Center(
-                            child: Text(
-                              '등록된 식품이 없습니다!',
-                              textAlign: TextAlign.center,  // 텍스트 중앙 정렬
-                              style: TextStyle(
-                                fontFamily: 'LGText',  // 폰트 설정
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,  // 텍스트 굵게 설정
-                                color: Colors.black,  // 텍스트 색상을 검정색으로 설정
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      actions: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,  // 버튼 중앙 정렬
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 1.0),  // 버튼 간격을 아래로 조정
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();  // AlertDialog 닫기
-                                },
-                                child: Text(
-                                  '닫기',
-                                  style: TextStyle(
-                                    fontFamily: 'LGText',  // 폰트 지정
-                                    fontSize: 16,           // 폰트 크기 (필요에 맞게 수정)
-                                    fontWeight: FontWeight.w500,  // 폰트 굵기 (필요에 맞게 수정)
-                                    color: Colors.black87,  // 버튼 텍스트 색상을 검정색으로 설정
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 50),  // 버튼 간격 조정
-                            Padding(
-                              padding: const EdgeInsets.only(top: 1.0),  // 버튼 간격을 아래로 조정
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (shelfSerial != null) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => FoodListPage(
-                                          shelfSerial: shelfSerial!, // Firestore 데이터 사용
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text("선반 데이터를 불러오는 중입니다.")),
-                                    );
-                                  }
-                                },
-                                child: Text(
-                                  '이동',
-                                  style: TextStyle(
-                                    fontFamily: 'LGText',  // 폰트 지정
-                                    fontSize: 16,           // 폰트 크기 (필요에 맞게 수정)
-                                    fontWeight: FontWeight.w500,  // 폰트 굵기 (필요에 맞게 수정)
-                                    color: Colors.grey,  // 버튼 텍스트 색상을 검정색으로 설정
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
+                  message: '등록된 식품이 없습니다!',
+                  onMove: () {
+                    _onShelfTap(context, "6879ZASD123456", "선반3");
                   },
                 );
               },
@@ -567,100 +503,12 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
             top: screenHeight * 0.43,
             child: GestureDetector(
               onTap: () {
-                // 선반 4 클릭 시 AlertDialog 표시
-                showDialog(
+                // 무조건 AlertDialog 표시
+                showCustomAlertDialog(
                   context: context,
-                  barrierDismissible: true, // 다이얼로그 외부 클릭 시 다이얼로그 닫기 가능
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      backgroundColor: Colors.white,  // 배경색을 하얀색으로 설정
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),  // 모서리를 둥글게 만드는 부분
-                      ),
-                      title: Padding(
-                        padding: const EdgeInsets.only(top: 30.0),  // 이모티콘을 아래로 내리기
-                        child: Center(  // 중앙 정렬을 위한 Center 위젯 사용
-                          child: Image.asset(
-                            'images/thinking.png',  // thinking.png 이미지 로드
-                            height: 50,  // 이미지 크기 조정
-                          ),
-                        ),
-                      ),
-                      content: Container(
-                        width: 180,  // AlertDialog 크기 설정 (너비)
-                        height: 50,  // AlertDialog 크기 설정 (높이)
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 27.0),  // 텍스트를 아래로 내리기
-                          child: Center(
-                            child: Text(
-                              '등록된 식품이 없습니다!',
-                              textAlign: TextAlign.center,  // 텍스트 중앙 정렬
-                              style: TextStyle(
-                                fontFamily: 'LGText',  // 폰트 설정
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,  // 텍스트 굵게 설정
-                                color: Colors.black,  // 텍스트 색상을 검정색으로 설정
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      actions: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,  // 버튼 중앙 정렬
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 1.0),  // 버튼 간격을 아래로 조정
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();  // AlertDialog 닫기
-                                },
-                                child: Text(
-                                  '닫기',
-                                  style: TextStyle(
-                                    fontFamily: 'LGText',  // 폰트 지정
-                                    fontSize: 16,           // 폰트 크기 (필요에 맞게 수정)
-                                    fontWeight: FontWeight.w500,  // 폰트 굵기 (필요에 맞게 수정)
-                                    color: Colors.black87,  // 버튼 텍스트 색상을 검정색으로 설정
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 50),  // 버튼 간격 조정
-                            Padding(
-                              padding: const EdgeInsets.only(top: 1.0),  // 버튼 간격을 아래로 조정
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (shelfSerial != null) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => FoodListPage(
-                                          shelfSerial: shelfSerial!, // Firestore 데이터 사용
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text("선반 데이터를 불러오는 중입니다.")),
-                                    );
-                                  }
-                                },
-                                child: Text(
-                                  '이동',
-                                  style: TextStyle(
-                                    fontFamily: 'LGText',  // 폰트 지정
-                                    fontSize: 16,           // 폰트 크기 (필요에 맞게 수정)
-                                    fontWeight: FontWeight.w500,  // 폰트 굵기 (필요에 맞게 수정)
-                                    color: Colors.grey,  // 버튼 텍스트 색상을 검정색으로 설정
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
+                  message: '등록된 식품이 없습니다!',
+                  onMove: () {
+                    _onShelfTap(context, "6879ZASD123456", "선반4");
                   },
                 );
               },
@@ -729,22 +577,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                 top: screenHeight * 0.181, // 기존 컨테이너의 위치 유지
                 child: GestureDetector(
                   onTap: () {
-                    print('선택된 선반 Serial: $shelfSerial'); // 값 출력
-                    if (shelfSerial != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FoodListPage(
-                            shelfSerial: shelfSerial!, // Firestore 데이터 사용
-                          ),
-                        ),
-                      );
-                    } else {
-                      print("선반 Serial 값이 비어있습니다."); // 디버깅용
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("선반 데이터를 불러오는 중입니다.")),
-                      );
-                    }
+                    _onShelfTap(context, "6879ZASD123456", "선반1");
                   },
                   child: Container(
                     width: screenWidth * 0.46, // 기존 컨테이너 크기

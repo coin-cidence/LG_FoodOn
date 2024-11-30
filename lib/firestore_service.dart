@@ -46,7 +46,7 @@ class FirestoreService {
           .where('fridge_serial', isEqualTo: fridgeSerial)
           // .where('smart_shelf_serial', isEqualTo: shelfSerial)
           .get();
-      print('SMART_SHELF 데이터: ${snapshot.docs.length}개');
+      print('firebase SMART_SHELF 데이터: ${snapshot.docs.length}개');
 
       return snapshot.docs.map((doc) {
         final data = doc.data();

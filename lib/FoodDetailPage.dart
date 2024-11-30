@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart'; // 날짜 포맷을 위한 패키지
 
 class FoodDetailPage extends StatefulWidget {
   final Map<String, dynamic> foodData; // FoodList에서 전달받은 데이터
@@ -41,22 +42,42 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     final foodData = widget.foodData;
     shelfName = foodData['smart_shelf_name'] ?? '선반 1';
     foodName = foodData['food_name'] ?? '식품 이름 없음';
-    foodUnusedNotifPeriod = "${foodData['food_unused_notif_period'] ?? 5}일";
+
+    // food_register_date가 Timestamp일 경우 DateTime으로 변환, 아닐 경우 그대로 사용
+    if (foodData['food_register_date'] is Timestamp) {
+      foodRegisterDate = (foodData['food_register_date'] as Timestamp).toDate();
+    } else if (foodData['food_register_date'] is DateTime) {
+      foodRegisterDate = foodData['food_register_date'];
+    } else {
+      foodRegisterDate = DateTime.now();
+    }
+
+    // foodUnusedNotifPeriod 초기값 설정 - notificationOptions에 없으면 기본값 "1주일"로 설정
+    String tempFoodUnusedNotifPeriod = "${foodData['food_unused_notif_period'] ?? "1주일"}";
+    foodUnusedNotifPeriod = notificationOptions.contains(tempFoodUnusedNotifPeriod) ? tempFoodUnusedNotifPeriod : "1주일";
     notificationMessage = "$foodUnusedNotifPeriod 이상 사용하지 않으면 알림을 받아요.";
-    foodRegisterDate = foodData['food_register_date'] ?? DateTime.now(); // 이미 DateTime으로 변환됨
+
     storageDays = 0; // 초기값 설정
     foodExpirationDate = TextEditingController(
       text: foodData['food_expiration_date'] != null
-          ? (foodData['food_expiration_date'] as Timestamp).toDate().toIso8601String()
+          ? (foodData['food_expiration_date'] is Timestamp
+          ? DateFormat('yyyy년 MM월 dd일').format((foodData['food_expiration_date'] as Timestamp).toDate())
+          : DateFormat('yyyy년 MM월 dd일').format(foodData['food_expiration_date']))
           : '',
     );
-    isExpiryToggle = foodData['food_is_expiry'] ?? false;
+    // 유통기한이 설정된 경우 알림 토글을 활성화
+    if (foodExpirationDate.text.isNotEmpty) {
+      isExpiryToggle = true;
+    } else {
+      isExpiryToggle = foodData['food_is_expiry'] ?? false;
+    }
+
     isNotificationToggle = foodData['food_is_notif'] ?? true;
 
     // 안내 메시지 초기화
     notificationMessage = "$foodUnusedNotifPeriod 이상 사용하지 않으면 알림을 받아요.";
     calculateStorageDays(); // 보관일수 계산
-    calculateStorageDays();
+    // calculateStorageDays();
   }
 
   void calculateStorageDays() {
@@ -70,14 +91,19 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     try {
       // Firestore 업데이트 로직
       final foodDocId = widget.foodData['id']; // FoodList에서 전달받은 문서 ID
+      DateTime? expirationDate;
+
+      if (foodExpirationDate.text.isNotEmpty) {
+        // 문자열을 DateTime으로 변환
+        expirationDate = DateFormat('yyyy년 MM월 dd일').parse(foodExpirationDate.text);
+      }
+
       await FirebaseFirestore.instance
           .collection('FOOD_MANAGEMENT') // 컬렉션 이름
           .doc(foodDocId) // 문서 ID
           .update({
         'food_name': foodName,
-        'food_expiration_date': foodExpirationDate.text.isNotEmpty
-            ? DateTime.parse(foodExpirationDate.text) // 문자열을 DateTime으로 변환
-            : null,
+        'food_expiration_date': expirationDate, // Firestore에는 DateTime으로 저장
         'food_is_expiry': isExpiryToggle,
         'food_is_notif': isNotificationToggle,
       });
@@ -409,14 +435,12 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                       });
                                     }
                                         : null,
-                                    items: notificationOptions.map<
-                                        DropdownMenuItem<String>>(
-                                            (String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        }).toList(),
+                                    items: notificationOptions.map<DropdownMenuItem<String>>((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
                                   ),
                                 ),
                                 Switch(
