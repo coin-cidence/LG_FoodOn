@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'deviceSelectionPage.dart';
 import 'MessagePage.dart';
 import 'widgets/my_custom_container.dart';
+import 'dummy_data.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -12,6 +14,77 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isPowerOn = true; // 냉장고 전원 상태
   List<Map<String, dynamic>> devices = []; // 디바이스 목록
   List<Map<String, dynamic>> messages = [];
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMessages(); // 메시지 초기화
+  }
+
+  void _loadMessages() {
+    final foodData = DummyData.getFoodManagementData(); // 더미 데이터 가져오기
+    List<Map<String, dynamic>> newMessages = []; // 새로운 메시지 리스트
+
+    for (var food in foodData) {
+      // 장기 미사용 알림
+      if (food['foodWeight'] != 0 && food["foodIsNotif"] == true) {
+        // 'foodWeightUpdateTime'부터 'foodUnusedNotifPeriod'만큼 시간이 경과했을 때 알림 생성
+        DateTime lastUpdatedTime = DateTime.parse(food['foodWeightUpdateTime']);
+        DateTime notifTime = lastUpdatedTime.add(Duration(days: food['foodUnusedNotifPeriod']));
+
+        // 현재 시간이 알림 시간이랑 일치할 경우 알림
+        if (DateTime.now().isAfter(notifTime) && DateTime.now().difference(notifTime).inDays >= 0) {
+          // 경과 시간 계산
+          Duration difference = DateTime.now().difference(notifTime);
+          String timeAgo = _formatNotificationTime(difference);
+
+          newMessages.add({
+            'content': '" ${food['foodName']} " ! 잊으신 건 아니죠...?',
+            // 'timeAgo':timeAgo,
+            'time': notifTime // 현재 시간으로 설정
+          });
+        }
+      }
+
+      // 유통기한 알림
+      if (food['foodExpirationDate'] != null && food["foodIsNotif"] == true) {
+        DateTime today = DateTime.now();
+        DateTime expirationNotifDate = DateTime(
+          DateTime.parse(food['foodExpirationDate']).year,
+          DateTime.parse(food['foodExpirationDate']).month,
+          DateTime.parse(food['foodExpirationDate']).day - 1,
+        );
+
+        if (today.year == expirationNotifDate.year &&
+            today.month == expirationNotifDate.month &&
+            today.day >= expirationNotifDate.day) {
+          newMessages.add({
+            'content': '" ${food['foodName']} " 유통기한이 하루 남았어요.',
+            'time': expirationNotifDate,
+          });
+        }
+      }
+    }
+
+    setState(() {
+      messages = newMessages; // 생성된 메시지를 상태에 반영
+    });
+  }
+
+// 경과 시간 포맷 함수
+  String _formatNotificationTime(Duration difference) {
+    if (difference.inDays >= 1) {
+      return DateFormat('MM월 dd일').format(DateTime.now().subtract(difference)); // 1일 이상 경과 시 날짜 형식
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}시간 전'; // 1일 미만, 시간 단위
+    } else {
+      return '${difference.inMinutes}분 전'; // 1일 미만, 분 단위
+    }
+  }
+
+
 
   // Bottom Sheet 표시
   // Bottom Sheet를 표시하는 함수
@@ -315,16 +388,46 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(width: 10),
           IconButton(
-            icon: Image.asset(
-              'images/image_home/bell.png',
-              width: 21,
-              height: 21,
+            icon: Stack(
+              clipBehavior: Clip.none, // 뱃지가 아이콘을 벗어나도 잘리거나 하지 않도록 설정
+              children: [
+                Image.asset(
+                  'images/image_home/bell.png',
+                  width: 21,
+                  height: 21,
+                ),
+                if (messages.length > 0) // 메시지가 있을 때만 뱃지를 표시
+                  Positioned(
+                    right: -8,
+                    top: -7,
+                    child: Container(
+                      padding: EdgeInsets.all(1),
+                      decoration: BoxDecoration(
+                        color: Colors.red, // 뱃지 색상
+                        borderRadius: BorderRadius.circular(10), // 뱃지 둥글게
+                      ),
+                      constraints: BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 13,
+                      ),
+                      child: Text(
+                        '${messages.length}', // 메시지 개수를 표시
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white, // 뱃지 내 텍스트 색상
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
             ),
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => MessagePage(messages: messages),
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MessagePage(messages: messages),
                 ),
               );
             },
