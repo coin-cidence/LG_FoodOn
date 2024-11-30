@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'deviceSelectionPage.dart';
 import 'MessagePage.dart';
 import 'widgets/my_custom_container.dart';
+import 'dummy_data.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'firestore_service.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -12,6 +16,75 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isPowerOn = true; // 냉장고 전원 상태
   List<Map<String, dynamic>> devices = []; // 디바이스 목록
   List<Map<String, dynamic>> messages = [];
+  List<String> selectedDevices = []; // 추가된 기기 이름 리스트
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMessages("SSS123456"); // 메시지 초기화
+  }
+
+  void _loadMessages(String shelfSerial) async {
+    final firestoreService = FirestoreService();
+    List<Map<String, dynamic>> foodData = await firestoreService.fetchFoodManagementData(shelfSerial);
+    List<Map<String, dynamic>> newMessages = []; // 새로운 메시지 리스트
+
+    // 경과 시간 포맷 함수
+    String _formatNotificationTime(Duration difference) {
+      if (difference.inDays >= 1) {
+        return DateFormat('MM월 dd일').format(DateTime.now().subtract(difference)); // 1일 이상 경과 시 날짜 형식
+      } else if (difference.inHours > 0) {
+        return '${difference.inHours}시간 전'; // 1일 미만, 시간 단위
+      } else {
+        return '${difference.inMinutes}분 전'; // 1일 미만, 분 단위
+      }
+    }
+
+    foodData.forEach((food) {
+      // 장기 미사용 알림
+      if (food['foodWeight'] != 0 && food['unusedNotif'] == true) {
+        final lastUpdatedTime = food['weightUpdateTime'] is DateTime
+            ? food['weightUpdateTime']
+            : (food['weightUpdateTime'] as Timestamp).toDate();
+
+        final notifTime = lastUpdatedTime.add(Duration(days: food['unusedNotifPeriod']));
+
+        if (DateTime.now().isAfter(notifTime) &&
+            DateTime.now().difference(notifTime).inDays >= 0) {
+          final difference = DateTime.now().difference(notifTime);
+          final timeAgo = _formatNotificationTime(difference);
+
+          newMessages.add({
+            'content': '" ${food['foodName']} " ! 잊으신 건 아니죠...?',
+            'time': notifTime,
+          });
+        }
+      }
+      // 유통기한 알림
+      if (food['expirDate'] != null && food['expirNotif'] == true) {
+        final expirationDate = food['expirDate'] is DateTime
+            ? food['expirDate']
+            : (food['expirDate'] as Timestamp).toDate();
+
+        final expirationNotifDate = expirationDate.subtract(Duration(days: 1));
+
+        if (DateTime.now().isAfter(expirationNotifDate)) {
+          newMessages.add({
+            'content': '" ${food['foodName']} " 유통기한이 하루 남았어요.',
+            'time': expirationNotifDate,
+          });
+        }
+      }
+
+    setState(() {
+      messages = newMessages; // 생성된 메시지를 상태에 반영
+    });
+  }
+ );
+}
+
 
   // Bottom Sheet 표시
   // Bottom Sheet를 표시하는 함수
@@ -315,16 +388,46 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(width: 10),
           IconButton(
-            icon: Image.asset(
-              'images/image_home/bell.png',
-              width: 21,
-              height: 21,
+            icon: Stack(
+              clipBehavior: Clip.none, // 뱃지가 아이콘을 벗어나도 잘리거나 하지 않도록 설정
+              children: [
+                Image.asset(
+                  'images/image_home/bell.png',
+                  width: 21,
+                  height: 21,
+                ),
+                if (messages.length > 0 && selectedDevices.contains('푸디온')) // 메시지가 있을 때만 뱃지를 표시
+                  Positioned(
+                    right: -8,
+                    top: -7,
+                    child: Container(
+                      padding: EdgeInsets.all(1),
+                      decoration: BoxDecoration(
+                        color: Colors.red, // 뱃지 색상
+                        borderRadius: BorderRadius.circular(10), // 뱃지 둥글게
+                      ),
+                      constraints: BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 13,
+                      ),
+                      child: Text(
+                        '${messages.length}', // 메시지 개수를 표시
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white, // 뱃지 내 텍스트 색상
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
             ),
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => MessagePage(messages: messages),
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MessagePage(messages: messages),
                 ),
               );
             },
@@ -585,7 +688,14 @@ class _HomeScreenState extends State<HomeScreen> {
       VoidCallback onTap,
       ) {
     return GestureDetector(
-      onTap: onTap, // 공통 클릭 동작 전달
+      onTap: () {
+        // 선택된 기기를 리스트에 추가하거나 제거
+        setState(() {
+          selectedDevices.add(name);
+        });
+        // 공통 클릭 동작 수행
+        onTap();
+      },
       child: Container(
         decoration: BoxDecoration(
           color: isPowerOn ? Colors.white : Colors.white.withOpacity(0.5), // 투명도 조정

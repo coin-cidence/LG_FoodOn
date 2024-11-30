@@ -42,6 +42,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     final foodData = widget.foodData;
     shelfName = foodData['smart_shelf_name'] ?? '선반 1';
     foodName = foodData['food_name'] ?? '식품 이름 없음';
+    originalFoodName = foodName;
 
     // food_register_date가 Timestamp일 경우 DateTime으로 변환, 아닐 경우 그대로 사용
     if (foodData['food_register_date'] is Timestamp) {
@@ -56,6 +57,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     String tempFoodUnusedNotifPeriod = "${foodData['food_unused_notif_period'] ?? "1주일"}";
     foodUnusedNotifPeriod = notificationOptions.contains(tempFoodUnusedNotifPeriod) ? tempFoodUnusedNotifPeriod : "1주일";
     notificationMessage = "$foodUnusedNotifPeriod 이상 사용하지 않으면 알림을 받아요.";
+    originalFoodUnusedNotifPeriod = foodUnusedNotifPeriod;
 
     storageDays = 0; // 초기값 설정
     foodExpirationDate = TextEditingController(
@@ -65,19 +67,19 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
           : DateFormat('yyyy년 MM월 dd일').format(foodData['food_expiration_date']))
           : '',
     );
+
     // 유통기한이 설정된 경우 알림 토글을 활성화
     if (foodExpirationDate.text.isNotEmpty) {
       isExpiryToggle = true;
     } else {
-      isExpiryToggle = foodData['food_is_expiry'] ?? false;
+      isExpiryToggle = foodData['food_expir_notif'] ?? false;
     }
 
-    isNotificationToggle = foodData['food_is_notif'] ?? true;
+    isNotificationToggle = foodData['food_unused_notif'] ?? true;
 
     // 안내 메시지 초기화
     notificationMessage = "$foodUnusedNotifPeriod 이상 사용하지 않으면 알림을 받아요.";
     calculateStorageDays(); // 보관일수 계산
-    // calculateStorageDays();
   }
 
   void calculateStorageDays() {
@@ -89,23 +91,36 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
 
   Future<void> _updateFoodData() async {
     try {
-      // Firestore 업데이트 로직
-      final foodDocId = widget.foodData['id']; // FoodList에서 전달받은 문서 ID
+      // Firestore에서 food_management_serial로 문서 찾기
+      final snapshot = await FirebaseFirestore.instance
+          .collection('FOOD_MANAGEMENT')
+          .where('food_management_serial', isEqualTo: widget.foodData['food_management_serial'])
+          .get();
+
+      if (snapshot.docs.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('해당 고유번호의 문서를 찾을 수 없습니다.')),
+        );
+        return;
+      }
+
+      final foodDocId = snapshot.docs.first.id; // 찾은 문서의 ID 가져오기
       DateTime? expirationDate;
 
       if (foodExpirationDate.text.isNotEmpty) {
         // 문자열을 DateTime으로 변환
-        expirationDate = DateFormat('yyyy년 MM월 dd일').parse(foodExpirationDate.text);
+        expirationDate = DateFormat('yyyy-MM-dd').parse(foodExpirationDate.text);
       }
 
+      // Firestore 업데이트 로직
       await FirebaseFirestore.instance
           .collection('FOOD_MANAGEMENT') // 컬렉션 이름
           .doc(foodDocId) // 문서 ID
           .update({
         'food_name': foodName,
         'food_expiration_date': expirationDate, // Firestore에는 DateTime으로 저장
-        'food_is_expiry': isExpiryToggle,
-        'food_is_notif': isNotificationToggle,
+        'food_expir_notif': isExpiryToggle,
+        'food_unused_notif': isNotificationToggle,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -118,6 +133,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       );
     }
   }
+
 
   void _onExpiryDateChanged(String value) {
     String filteredValue = value.replaceAll(RegExp(r'[^0-9]'), '');

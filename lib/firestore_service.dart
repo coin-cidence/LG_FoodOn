@@ -3,6 +3,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // Firestore에 문서 추가 메서드
+  Future<void> addDocument(String collectionPath, Map<String, dynamic> data) async {
+    try {
+      await _firestore.collection(collectionPath).add(data);
+    } catch (e) {
+      print("Error adding document to $collectionPath: $e");
+      rethrow;
+    }
+  }
+
   // User Data 읽기
   Future<Map<String, dynamic>> fetchUserData(String userId) async {
     try {
@@ -46,6 +56,8 @@ class FirestoreService {
           .where('fridge_serial', isEqualTo: fridgeSerial)
           // .where('smart_shelf_serial', isEqualTo: shelfSerial)
           .get();
+      print('fridgeSerial 데이터 타입: ${fridgeSerial.runtimeType}');
+      print('firestore에서 잘 받아왔니? SMART_SHELF 데이터: ${snapshot.docs.length}개');
       print('firebase SMART_SHELF 데이터: ${snapshot.docs.length}개');
 
       return snapshot.docs.map((doc) {
@@ -83,8 +95,9 @@ class FirestoreService {
           "foodLocation": data['food_location'],
           "foodRegDate": data['food_register_date'],
           "expirDate": data['food_expiration_date'],
+          "expirNotif": data['food_expir_notif'],
           "unusedNotifPeriod": data['food_unused_notif_period'],
-          "foodIsNotif": data['food_is_notif'],
+          "unusedNotif": data['food_unused_notif'],
           "weightUpdateTime": data['food_weight_update_time'],
         };
       }).toList();
@@ -113,7 +126,9 @@ class FirestoreService {
           "foodLocation": data['food_location'], // 매핑된 변수
           "expirDate": data['food_expiration_date'], // 매핑된 변수
           "foodIsDel": data['food_is_delete'], // 매핑된 변수
-          "unusedNotifPeriod": data['food_unused_notif_period'], // 매핑된 변수
+          "expirNotif": data['food_expir_notif'],
+          "unusedNotifPeriod": data['food_unused_notif_period'],
+          "unusedNotif": data['food_unused_notif'],
           "eventTime": data['event_datetime'], // 매핑된 변수
         };
       }).toList();
