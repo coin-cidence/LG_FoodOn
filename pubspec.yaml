@@ -12,15 +12,23 @@ dependencies:
   flutter:
     sdk: flutter
   intl: ^0.18.0 # 최신 버전
+  avatar_glow: ^2.0.2 # 최신 버전 확인 후 업데이트
+
 
   cupertino_icons: ^1.0.8
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.4
+  flutter_slidable: ^3.1.1
+
+  flutter_gradient_animation_text: ^1.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^4.0.0
-  flutter_slidable: ^3.1.1
+
 
 flutter:
   uses-material-design: true
@@ -28,6 +36,7 @@ flutter:
    - images/image_home/
    - images/product_image/
    - images/
+   - images/icons/
 
   fonts:
     - family: LGText
