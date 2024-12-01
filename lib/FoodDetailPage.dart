@@ -17,6 +17,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   late DateTime foodRegisterDate;
   late int storageDays;
   late TextEditingController foodExpirationDate;
+  late TextEditingController foodNameController;
   late bool isExpiryToggle;
   late bool isNotificationToggle;
   late String foodUnusedNotifPeriod;
@@ -67,6 +68,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
           : DateFormat('yyyy년 MM월 dd일').format(foodData['food_expiration_date']))
           : '',
     );
+
+    foodNameController = TextEditingController(text: foodName);
 
     // 유통기한이 설정된 경우 알림 토글을 활성화
     if (foodExpirationDate.text.isNotEmpty) {
@@ -248,6 +251,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true, // 키보드에 의해 화면이 자동으로 조정되도록 설정
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -256,347 +260,393 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              AppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                leading: IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.black),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                title: Text(
-                  shelfName,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "LGText",
-                    color: Colors.black,
-                  ),
-                ),
-                titleSpacing: 0,
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          isEditing
-                              ? Expanded(
-                            child: TextField(
-                              controller:
-                              TextEditingController(text: foodName),
-                              decoration: InputDecoration(
-                                hintText: "식품 이름을 입력하세요",
-                                hintStyle: TextStyle(
+            child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight, // 전체 화면을 최소 높이로 설정
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          bottom: MediaQuery
+                              .of(context)
+                              .viewInsets
+                              .bottom, // 키보드가 나타날 때 하단 패딩 적용
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppBar(
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
+                              leading: IconButton(
+                                icon: Icon(Icons.arrow_back, color: Colors.black),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              title: Text(
+                                shelfName,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                   fontFamily: "LGText",
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.grey,
-                                ),
-                                border: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.grey.shade300,
-                                    width: 1.0,
-                                  ),
+                                  color: Colors.black,
                                 ),
                               ),
-                              onChanged: (value) {
-                                setState(() {
-                                  foodName = value;
-                                });
-                              },
+                              titleSpacing: 0,
                             ),
-                          )
-                              : Text(
-                            foodName.isEmpty
-                                ? "식품 이름을 입력하세요"
-                                : foodName,
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: "LGText",
-                            ),
-                          ),
-                          if (!isEditing)
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  isEditing = true;
-                                  _updateFoodData(); // Firestore 업데이트 호출
-                                });
-                              },
-                              child: Row(
+                            Padding(
+                              padding: const EdgeInsets.all(30.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Icon(Icons.edit,
-                                      size: 20, color: Colors.black),
-                                  SizedBox(width: 1),
-                                  Text(
-                                    "편집",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Color(0xFF001F28),
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: "LGText",
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .spaceBetween,
+                                    children: [
+                                      isEditing
+                                      ? Expanded(
+                                        child: TextField(
+                                          controller: foodNameController,
+                                          decoration: InputDecoration(
+                                            hintText: "식품 이름을 입력하세요",
+                                            hintStyle: TextStyle(
+                                              fontFamily: "LGText",
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.grey,
+                                            ),
+                                            border: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Colors.grey.shade300,
+                                                width: 1.0,
+                                              ),
+                                            ),
+                                          ),
+                                          onChanged: (value) {
+                                            setState(() {
+                                              foodName = value;
+                                            });
+                                          },
+                                        ),
+                                      )
+                                          : Text(
+                                        foodName.isEmpty
+                                            ? "식품 이름을 입력하세요"
+                                            : foodName,
+                                        style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: "LGText",
+                                        ),
+                                      ),
+                                      if (!isEditing)
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              isEditing = true;
+                                              _updateFoodData(); // Firestore 업데이트 호출
+                                            });
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.edit,
+                                                  size: 20, color: Colors.black),
+                                              SizedBox(width: 1),
+                                              Text(
+                                                "편집",
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Color(0xFF001F28),
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: "LGText",
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 20),
+                                  _buildBoxWithWidget(
+                                    "등록일",
+                                    Text(
+                                      "${foodRegisterDate.year}년 ${foodRegisterDate
+                                          .month}월 ${foodRegisterDate.day}일",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontFamily: "LGText",
+                                      ),
                                     ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  _buildBoxWithWidget(
+                                    "보관일수",
+                                    Text(
+                                      "+$storageDays일",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontFamily: "LGText",
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  _buildBoxWithWidget(
+                                    "유통기한",
+                                    Row(
+                                      children: [
+                                        Container(
+                                          width: 130,
+                                          child: TextField(
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontFamily: "LGText",
+                                              color: isExpiryToggle
+                                                  ? Colors.black
+                                                  : Colors.grey, // 알림 상태에 따라 색상 설정
+                                            ),
+                                            controller: foodExpirationDate,
+                                            decoration: InputDecoration(
+                                              hintText: "YYYY년 MM월 DD일",
+                                              hintStyle: TextStyle(
+                                                fontFamily: "LGText",
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.grey,
+                                              ),
+                                              border: isEditing
+                                                  ? OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(
+                                                    10.0),
+                                                borderSide: BorderSide(
+                                                  color: Colors.grey.shade300,
+                                                  width: 1.0,
+                                                ),
+                                              )
+                                                  : InputBorder.none,
+                                            ),
+                                            onChanged: _onExpiryDateChanged,
+                                            keyboardType: TextInputType.number,
+                                            enabled: isEditing,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        Switch(
+                                          value: isExpiryToggle,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              isExpiryToggle = value;
+                                            });
+                                          },
+                                          activeColor: Colors.white,
+                                          activeTrackColor: Color(0xFF23778F),
+                                          inactiveThumbColor: Colors.white,
+                                          inactiveTrackColor: Color(0xFF808080),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  _buildBoxWithWidget(
+                                    "장기 미사용 알림",
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: DropdownButton<String>(
+                                                value: foodUnusedNotifPeriod,
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontFamily: "LGText",
+                                                  color: isNotificationToggle
+                                                      ? Colors.black
+                                                      : Colors
+                                                      .grey, // 알림 상태에 따라 색상 설정
+                                                ),
+                                                dropdownColor: Colors.white,
+                                                elevation: 1,
+                                                onChanged: isEditing
+                                                    ? (String? newValue) {
+                                                  setState(() {
+                                                    foodUnusedNotifPeriod =
+                                                    newValue!;
+                                                    notificationMessage =
+                                                    "$foodUnusedNotifPeriod 이상 사용하지 않으면 알림을 받아요.";
+                                                  });
+                                                }
+                                                    : null,
+                                                items: notificationOptions.map<
+                                                    DropdownMenuItem<String>>((
+                                                    String value) {
+                                                  return DropdownMenuItem<String>(
+                                                      value: value,
+                                                      child: Text(
+                                                          value,
+                                                          style: TextStyle(
+                                                            fontFamily: "LGText",
+                                                            color: isNotificationToggle
+                                                                ? Colors.black
+                                                                : Colors
+                                                                .grey, // 알림 상태에 따라 색상 설정
+                                                          )
+                                                      )
+                                                  );
+                                                }).toList(),
+                                              ),
+                                            ),
+                                            Switch(
+                                              value: isNotificationToggle,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  isNotificationToggle = value;
+                                                });
+                                              },
+                                              activeColor: Colors.white,
+                                              activeTrackColor: Color(0xFF23778F),
+                                              inactiveThumbColor: Colors.white,
+                                              inactiveTrackColor: Color(0xFF808080),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  if (notificationMessage != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 5.0, left: 10.0),
+                                      child: Text(
+                                        notificationMessage!,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: isNotificationToggle
+                                              ? Colors.black
+                                              : Color(0xFF808080),
+                                          // 알림 상태에 따라 색상 설정
+                                          fontFamily: "LGText",
+                                        ),
+                                      ),
+                                    ),
+                                  SizedBox(height: 20),
+                                  Row(
+                                    children: [
+                                      if (isEditing) ...[
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                // 이전 상태로 복원
+                                                foodName =
+                                                    originalFoodName; // 원래 식품 이름 복원
+                                                foodUnusedNotifPeriod =
+                                                    originalFoodUnusedNotifPeriod; // 원래 알림 설정 복원
+                                                isEditing = false; // 편집 모드 종료
+                                              });
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.white,
+                                              foregroundColor: Color(0xFFA50534),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(
+                                                    10),
+                                              ),
+                                              elevation: 0,
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 14),
+                                              child: Text(
+                                                "취소",
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: "LGText",
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                isEditing = false;
+                                              });
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Color(0xFFA50534),
+                                              foregroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(
+                                                    10),
+                                              ),
+                                              elevation: 0,
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 14),
+                                              child: Text(
+                                                "편집 저장",
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: "LGText",
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ] else
+                                        ...[
+                                          Expanded(
+                                            child: ElevatedButton(
+                                              onPressed: () {
+                                                _showDeleteDialogForDetail();
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Color(0xFFA50534),
+                                                foregroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius
+                                                      .circular(10),
+                                                ),
+                                                elevation: 0,
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                const EdgeInsets.symmetric(
+                                                    vertical: 14),
+                                                child: Text(
+                                                  "식품 삭제",
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: "LGText",
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                    ],
                                   ),
                                 ],
                               ),
                             ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      _buildBoxWithWidget(
-                        "등록일",
-                        Text(
-                          "${foodRegisterDate.year}년 ${foodRegisterDate.month}월 ${foodRegisterDate.day}일",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: "LGText",
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      _buildBoxWithWidget(
-                        "보관일수",
-                        Text(
-                          "+$storageDays일",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: "LGText",
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      _buildBoxWithWidget(
-                        "유통기한",
-                        Row(
-                          children: [
-                            Container(
-                              width: 130,
-                              child: TextField(
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: "LGText",
-                                  color: isExpiryToggle ? Colors.black : Colors.grey, // 알림 상태에 따라 색상 설정
-                                ),
-                                controller: foodExpirationDate,
-                                decoration: InputDecoration(
-                                  hintText: "YYYY년 MM월 DD일",
-                                  hintStyle: TextStyle(
-                                    fontFamily: "LGText",
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.grey,
-                                  ),
-                                  border: isEditing
-                                      ? OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    borderSide: BorderSide(
-                                      color: Colors.grey.shade300,
-                                      width: 1.0,
-                                    ),
-                                  )
-                                      : InputBorder.none,
-                                ),
-                                onChanged: _onExpiryDateChanged,
-                                keyboardType: TextInputType.number,
-                                enabled: isEditing,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Spacer(),
-                            Switch(
-                              value: isExpiryToggle,
-                              onChanged: (value) {
-                                setState(() {
-                                  isExpiryToggle = value;
-                                });
-                              },
-                              activeColor: Colors.white,
-                              activeTrackColor: Color(0xFF23778F),
-                              inactiveThumbColor: Colors.white,
-                              inactiveTrackColor: Color(0xFF808080),
-                            ),
                           ],
                         ),
                       ),
-                      SizedBox(height: 20),
-                      _buildBoxWithWidget(
-                        "장기 미사용 알림",
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: DropdownButton<String>(
-                                    value: foodUnusedNotifPeriod,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontFamily: "LGText",
-                                      color: isNotificationToggle ? Colors.black : Colors.grey, // 알림 상태에 따라 색상 설정
-                                    ),
-                                    dropdownColor: Colors.white,
-                                    elevation: 1,
-                                    onChanged: isEditing
-                                        ? (String? newValue) {
-                                      setState(() {
-                                        foodUnusedNotifPeriod = newValue!;
-                                        notificationMessage = "$foodUnusedNotifPeriod 이상 사용하지 않으면 알림을 받아요.";
-                                      });
-                                    }
-                                        : null,
-                                    items: notificationOptions.map<DropdownMenuItem<String>>((String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(
-                                          value,
-                                          style: TextStyle(
-                                            fontFamily: "LGText",
-                                            color: isNotificationToggle ? Colors.black : Colors.grey, // 알림 상태에 따라 색상 설정
-                                          )
-                                        )
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
-                                Switch(
-                                  value: isNotificationToggle,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      isNotificationToggle = value;
-                                    });
-                                  },
-                                  activeColor: Colors.white,
-                                  activeTrackColor: Color(0xFF23778F),
-                                  inactiveThumbColor: Colors.white,
-                                  inactiveTrackColor: Color(0xFF808080),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (notificationMessage != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5.0, left: 10.0),
-                          child: Text(
-                            notificationMessage!,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: isNotificationToggle ? Colors.black : Color(0xFF808080), // 알림 상태에 따라 색상 설정
-                              fontFamily: "LGText",
-                            ),
-                          ),
-                        ),
-                      SizedBox(height: 20),
-                      Row(
-                        children: [
-                          if (isEditing) ...[
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    // 이전 상태로 복원
-                                    foodName = originalFoodName; // 원래 식품 이름 복원
-                                    foodUnusedNotifPeriod = originalFoodUnusedNotifPeriod; // 원래 알림 설정 복원
-                                    isEditing = false; // 편집 모드 종료
-                                  });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: Color(0xFFA50534),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  elevation: 0,
-                                ),
-                                child: Padding(
-                                  padding:
-                                  const EdgeInsets.symmetric(vertical: 14),
-                                  child: Text(
-                                    "취소",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: "LGText",
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    isEditing = false;
-                                  });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFFA50534),
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  elevation: 0,
-                                ),
-                                child: Padding(
-                                  padding:
-                                  const EdgeInsets.symmetric(vertical: 14),
-                                  child: Text(
-                                    "편집 저장",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: "LGText",
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ] else ...[
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  _showDeleteDialogForDetail();
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFFA50534),
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  elevation: 0,
-                                ),
-                                child: Padding(
-                                  padding:
-                                  const EdgeInsets.symmetric(vertical: 14),
-                                  child: Text(
-                                    "식품 삭제",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: "LGText",
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+                    ),
+                  );
+                }
+            )
         ),
       ),
     );
