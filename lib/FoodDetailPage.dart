@@ -128,6 +128,10 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       );
 
       setState(() {
+        widget.foodData['food_name'] = foodName;
+        widget.foodData['food_expiration_date'] = expirationDate;
+        widget.foodData['food_expir_notif'] = isExpiryToggle;
+        widget.foodData['food_unused_notif'] = isNotificationToggle;
         isEditing = false; // 편집 모드 종료
       });
     } catch (e) {
@@ -209,7 +213,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('images/엘지배경_대지 1 3.png'),
