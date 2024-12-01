@@ -631,7 +631,7 @@ class _FoodListPageState extends State<FoodListPage> {
           Expanded(
             child: CustomSlidableButton(
               onPressed: () {
-                _showDeleteDialog(index);
+                _showDeleteDialog(index); 
               },
               icon: Icons.delete,
               iconColor: Colors.red,
