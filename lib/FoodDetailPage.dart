@@ -113,9 +113,13 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       if (foodExpirationDate.text.isNotEmpty) {
         try {
           // 문자열을 DateTime으로 변환 (입력 형식에 맞춰 변경)
-          expirationDate = DateFormat('yyyy년 MM월 dd일').parse(foodExpirationDate.text);
+          expirationDate = DateTime.parse(foodExpirationDate.text);
         } catch (formatError) {
-          throw FormatException('유효하지 않은 날짜 형식입니다: ${foodExpirationDate.text}');
+          // 날짜 형식이 잘못된 경우 경고 메시지 출력
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('유효하지 않은 날짜 형식입니다. 올바른 형식으로 입력해주세요. (예: 2024-11-30)')),
+          );
+          return; // 유효하지 않은 날짜 형식이면 업데이트하지 않음
         }
       }
 
@@ -375,7 +379,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                             ),
                                             controller: foodExpirationDate,
                                             decoration: InputDecoration(
-                                              hintText: "YYYY년 MM월 DD일",
+                                              hintText: "YYYY-MM-DD",
                                               hintStyle: TextStyle(
                                                 fontFamily: "LGText",
                                                 fontWeight: FontWeight.w400,
@@ -392,7 +396,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                   : InputBorder.none,
                                             ),
                                             onChanged: _onExpiryDateChanged,
-                                            keyboardType: TextInputType.number,
+                                            keyboardType: TextInputType.datetime,
                                             enabled: isEditing,
                                             textAlign: TextAlign.center,
                                           ),
