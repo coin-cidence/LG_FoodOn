@@ -104,19 +104,19 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         return;
       }
 
-      final foodDocId = snapshot.docs.first.id; // 찾은 문서의 ID 가져오기
+      final foodDocRef = snapshot.docs.first.reference;
       DateTime? expirationDate;
 
       if (foodExpirationDate.text.isNotEmpty) {
-        // 문자열을 DateTime으로 변환
-        expirationDate = DateFormat('yyyy-MM-dd').parse(foodExpirationDate.text);
+        try {
+          // 문자열을 DateTime으로 변환 (입력 형식에 맞춰 변경)
+          expirationDate = DateFormat('yyyy년 MM월 dd일').parse(foodExpirationDate.text);
+        } catch (formatError) {
+          throw FormatException('유효하지 않은 날짜 형식입니다: ${foodExpirationDate.text}');
+        }
       }
-
       // Firestore 업데이트 로직
-      await FirebaseFirestore.instance
-          .collection('FOOD_MANAGEMENT') // 컬렉션 이름
-          .doc(foodDocId) // 문서 ID
-          .update({
+      await foodDocRef.update({
         'food_name': foodName,
         'food_expiration_date': expirationDate, // Firestore에는 DateTime으로 저장
         'food_expir_notif': isExpiryToggle,
@@ -124,8 +124,12 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('데이터가 성공적으로 업데이트되었습니다!')),
+        SnackBar(content: Text('식품 정보가 성공적으로 업데이트되었습니다!')),
       );
+
+      setState(() {
+        isEditing = false; // 편집 모드 종료
+      });
     } catch (e) {
       print("Error updating food data: $e");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -202,49 +206,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       },
     );
   }
-  String _formatExpiryDate(String value) {
-    String result = value;
-
-    if (result.length >= 5 && result.length <= 6) {
-      result = "${result.substring(0, 4)}-${result.substring(4, 6)}";
-    } else if (result.length >= 7 && result.length <= 8) {
-      result =
-      "${result.substring(0, 4)}-${result.substring(4, 6)}-${result.substring(6, 8)}";
-    }
-
-    return result;
-  }
-
-  Widget _buildBoxWithWidget(String label, Widget widget) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-      decoration: BoxDecoration(
-        color: Color(0xFFFFFFFF),
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: Row(
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              fontFamily: "LGText",
-            ),
-          ),
-          SizedBox(width: 25.0),
-          Expanded(child: widget),
-        ],
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    foodExpirationDate.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -328,7 +289,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                               onTap: () {
                                 setState(() {
                                   isEditing = true;
-                                  _updateFoodData(); // Firestore 업데이트 호출
                                 });
                               },
                               child: Row(
@@ -527,10 +487,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                             SizedBox(width: 10),
                             Expanded(
                               child: ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    isEditing = false;
-                                  });
+                                onPressed: () async {
+                                  _updateFoodData();
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Color(0xFFA50534),
@@ -596,3 +554,40 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     );
   }
 }
+
+  String _formatExpiryDate(String value) {
+    String result = value;
+
+    if (result.length >= 5 && result.length <= 6) {
+      result = "${result.substring(0, 4)}-${result.substring(4, 6)}";
+    } else if (result.length >= 7 && result.length <= 8) {
+      result =
+      "${result.substring(0, 4)}-${result.substring(4, 6)}-${result.substring(6, 8)}";
+    }
+
+    return result;
+  }
+
+  Widget _buildBoxWithWidget(String label, Widget widget) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+      decoration: BoxDecoration(
+        color: Color(0xFFFFFFFF),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: Row(
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              fontFamily: "LGText",
+            ),
+          ),
+          SizedBox(width: 25.0),
+          Expanded(child: widget),
+        ],
+      ),
+    );
+  }
