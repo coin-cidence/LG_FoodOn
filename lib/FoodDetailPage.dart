@@ -109,7 +109,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
 
       if (foodExpirationDate.text.isNotEmpty) {
         // 문자열을 DateTime으로 변환
-        expirationDate = DateFormat('yyyy-MM-dd').parse(foodExpirationDate.text);
+        expirationDate = DateFormat('yyyy년 MM월 dd일').parse(foodExpirationDate.text);
       }
 
       // Firestore 업데이트 로직
@@ -383,18 +383,19 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontFamily: "LGText",
+                                  color: isExpiryToggle ? Colors.black : Colors.grey, // 알림 상태에 따라 색상 설정
                                 ),
                                 controller: foodExpirationDate,
                                 decoration: InputDecoration(
-                                  hintText: "YYYY-MM-DD",
+                                  hintText: "YYYY년 MM월 DD일",
                                   hintStyle: TextStyle(
                                     fontFamily: "LGText",
                                     fontWeight: FontWeight.w400,
+                                    color: Colors.grey,
                                   ),
                                   border: isEditing
                                       ? OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(10.0),
+                                    borderRadius: BorderRadius.circular(10.0),
                                     borderSide: BorderSide(
                                       color: Colors.grey.shade300,
                                       width: 1.0,
@@ -438,7 +439,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontFamily: "LGText",
-                                      color: Colors.black,
+                                      color: isNotificationToggle ? Colors.black : Colors.grey, // 알림 상태에 따라 색상 설정
                                     ),
                                     dropdownColor: Colors.white,
                                     elevation: 1,
@@ -446,15 +447,20 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                         ? (String? newValue) {
                                       setState(() {
                                         foodUnusedNotifPeriod = newValue!;
-                                        notificationMessage =
-                                        "$foodUnusedNotifPeriod 이상 사용하지 않으면 알림을 받아요.";
+                                        notificationMessage = "$foodUnusedNotifPeriod 이상 사용하지 않으면 알림을 받아요.";
                                       });
                                     }
                                         : null,
                                     items: notificationOptions.map<DropdownMenuItem<String>>((String value) {
                                       return DropdownMenuItem<String>(
                                         value: value,
-                                        child: Text(value),
+                                        child: Text(
+                                          value,
+                                          style: TextStyle(
+                                            fontFamily: "LGText",
+                                            color: isNotificationToggle ? Colors.black : Colors.grey, // 알림 상태에 따라 색상 설정
+                                          )
+                                        )
                                       );
                                     }).toList(),
                                   ),
@@ -483,7 +489,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                             notificationMessage!,
                             style: TextStyle(
                               fontSize: 12,
-                              color: Color(0xFF808080),
+                              color: isNotificationToggle ? Colors.black : Color(0xFF808080), // 알림 상태에 따라 색상 설정
                               fontFamily: "LGText",
                             ),
                           ),

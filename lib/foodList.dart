@@ -187,6 +187,18 @@ class _FoodListPageState extends State<FoodListPage> {
     });
   }
 
+  void _handleHighlightingToggle() {
+    setState(() {
+      if (highlightedLocations.isNotEmpty) {
+        // 하이라이팅 해제
+        highlightedLocations = [];
+        // 필터 해제 후 '가나다순'으로 정렬 적용
+        _applyFilter("가나다순");
+        selectedFilter = "가나다순"; // UI 필터에 반영
+      }
+    });
+  }
+
   Color _getCellColor(Map<String, dynamic> cellData) {
     if (cellData.isEmpty) return Colors.white;
 
@@ -239,8 +251,23 @@ class _FoodListPageState extends State<FoodListPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5), // 모서리를 둥글게 만드는 부분
           ),
-          title: Text("식품을 등록하세요!"),
-          content: Text("식품을 등록하면 선반에 표시됩니다."),
+          title: Text(
+            '식품을 등록하세요!',
+            style: TextStyle(
+              fontFamily: 'LGText',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+          ),
+        ),
+          content: Text(
+            "식품을 등록하면 선반에 표시됩니다.",
+            style: TextStyle(
+              fontFamily: 'LGText',
+              fontSize: 16,
+              color: Colors.black,
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () {
@@ -249,7 +276,13 @@ class _FoodListPageState extends State<FoodListPage> {
                   _isDialogShowing = false; // 다이얼로그가 닫힐 때 플래그 초기화
                 });
               },
-              child: Text("확인"),
+              child: Text(
+                "확인",
+                style: TextStyle(
+                  fontFamily: 'LGText',
+                  color: Colors.black,
+                ),
+              ),
             ),
           ],
         );
@@ -258,7 +291,7 @@ class _FoodListPageState extends State<FoodListPage> {
   }
 
   // 검색 로직
-  void _searchFood(String query) {
+  /*void _searchFood(String query) {
     setState(() {
       if (query.isEmpty) {
         filteredFoodData = List.from(allFoodData); // 검색어 없으면 전체 데이터 표시
@@ -269,7 +302,32 @@ class _FoodListPageState extends State<FoodListPage> {
             .toList();
       }
     });
+  }*/
+  // 검색 로직
+  void _searchFood(String query) {
+    setState(() {
+      highlightedLocations = []; // 기존 하이라이팅 초기화
+
+      if (query.isEmpty) {
+        // 검색어 없으면 전체 데이터 표시하고, 하이라이팅 없음
+        filteredFoodData = List.from(allFoodData);
+      } else {
+        // 검색어에 해당하는 식품 필터링
+        filteredFoodData = allFoodData
+            .where((food) => food['food_name'].toString().toLowerCase().contains(query.toLowerCase()))
+            .toList();
+
+        // 검색 결과 중 첫 번째 항목의 위치 하이라이팅
+        if (filteredFoodData.isNotEmpty) {
+          final selectedFood = filteredFoodData.first;
+          if (selectedFood.containsKey('food_location') && selectedFood['food_location'] != null) {
+            highlightedLocations = List.from(selectedFood['food_location']);
+          }
+        }
+      }
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -309,8 +367,13 @@ class _FoodListPageState extends State<FoodListPage> {
                       return DropdownMenuItem<String>(
                         value: shelf['shelfName'],
                         child: Text(
-                          shelf['shelfName'], // 드롭다운 텍스트
-                          style: TextStyle(color: Colors.black), // 드롭다운 텍스트 색상 설정
+                          shelf['shelfName'],
+                          style: TextStyle(
+                            fontFamily: 'LGText',
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       );
                     }).toList()
@@ -319,7 +382,12 @@ class _FoodListPageState extends State<FoodListPage> {
                         value: "선반 없음",
                         child: Text(
                           "선반 없음",
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(
+                            fontFamily: 'LGText',
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ];
@@ -404,6 +472,7 @@ class _FoodListPageState extends State<FoodListPage> {
           title: Text(
             '식품명을 입력하세요',
             style: TextStyle(
+              fontFamily: 'LGText',
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.black,
@@ -414,6 +483,7 @@ class _FoodListPageState extends State<FoodListPage> {
             decoration: InputDecoration(
               hintText: '식품 이름 입력',
               hintStyle: TextStyle(
+                fontFamily: 'LGText',
                 fontSize: 16,
                 color: Colors.grey,
               ),
@@ -427,7 +497,7 @@ class _FoodListPageState extends State<FoodListPage> {
               onPressed: () {
                 Navigator.pop(context); // 다이얼로그 닫기
               },
-              child: Text('확인', style: TextStyle(color: Colors.black)),
+              child: Text('확인', style: TextStyle(fontFamily: 'LGText', color: Colors.black)),
             ),
           ],
         );
@@ -490,8 +560,10 @@ class _FoodListPageState extends State<FoodListPage> {
                             highlightedLocations.every(
                                   (loc) => selectedFood['food_location'].contains(loc),
                             )) {
-                          highlightedLocations = [];
-                          filteredFoodData = List.from(allFoodData);
+                          _handleHighlightingToggle();
+
+                          // highlightedLocations = [];
+                          // filteredFoodData = List.from(allFoodData);
                         } else {
                           highlightedLocations = List.from(selectedFood['food_location']);
                           filteredFoodData = allFoodData.where((food) {
@@ -501,8 +573,10 @@ class _FoodListPageState extends State<FoodListPage> {
                           }).toList();
                         }
                       } else {
-                        highlightedLocations = [];
-                        filteredFoodData = List.from(allFoodData);
+                        _handleHighlightingToggle();
+
+                        // highlightedLocations = [];
+                        // filteredFoodData = List.from(allFoodData);
                       }
                     });
                   },
@@ -558,6 +632,7 @@ class _FoodListPageState extends State<FoodListPage> {
         Text(
           "식품목록",
           style: TextStyle(
+            fontFamily: 'LGText',
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -569,7 +644,7 @@ class _FoodListPageState extends State<FoodListPage> {
           value: selectedFilter,
           icon: Icon(
             Icons.arrow_drop_down,
-            color: Color(0xFF8D9294),
+            color: Color(0xFF5C5C5C),
           ),
           items: ["가나다순", "오래된순", "장기미사용식품"].map((String value) {
             return DropdownMenuItem<String>(
@@ -577,8 +652,9 @@ class _FoodListPageState extends State<FoodListPage> {
               child: Text(
                 value,
                 style: TextStyle(
+                  fontFamily: 'LGText',
                   fontSize: 14,
-                  color: Color(0xFF8D9294),
+                  color: Color(0xFF5C5C5C),
                 ),
               ),
             );
@@ -690,6 +766,7 @@ class _FoodListPageState extends State<FoodListPage> {
                 child: Text(
                   food['food_name'],
                   style: TextStyle(
+                    fontFamily: 'LGText',
                     color: Colors.black,
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
@@ -726,7 +803,7 @@ class _FoodListPageState extends State<FoodListPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('취소', style: TextStyle(color: Colors.black)),
+              child: Text('취소', style: TextStyle(fontFamily: 'LGText', color: Colors.black)),
             ),
             TextButton(
               onPressed: () {
@@ -746,7 +823,7 @@ class _FoodListPageState extends State<FoodListPage> {
                 });
                 Navigator.of(context).pop();
               },
-              child: Text('삭제', style: TextStyle(color: Colors.red)),
+              child: Text('삭제', style: TextStyle(fontFamily: 'LGText', color: Colors.red)),
             ),
           ],
         );
