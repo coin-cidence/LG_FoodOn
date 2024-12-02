@@ -688,7 +688,32 @@ class _FoodListPageState extends State<FoodListPage> {
                   MaterialPageRoute(
                     builder: (context) => FoodDetailPage(foodData: food),
                   ),
-                ).then((deletedFoodName) { // 나린 추가한 부분 - FoodDetailPage에서 삭제 시 삭제
+                ).then((result) {
+                  // result가 변경된 데이터나 삭제된 데이터 정보를 담고 있다고 가정합니다.
+                  if (result != null) {
+                    if (result is String) {
+                      // 삭제된 식품명을 기준으로 데이터 제거
+                      setState(() {
+                        allFoodData.removeWhere((food) => food['food_name'] == result);
+                        filteredFoodData.removeWhere((food) => food['food_name'] == result);
+                      });
+                    } else if (result is Map<String, dynamic>) {
+                      // 변경된 식품 정보를 기준으로 데이터 업데이트
+                      setState(() {
+                        int index = allFoodData.indexWhere((item) => item['food_management_serial'] == result['food_management_serial']);
+                        if (index != -1) {
+                          allFoodData[index] = result; // 변경된 데이터로 갱신
+                          filteredFoodData = List.from(allFoodData);
+                        }
+                      });
+                    }
+                  }
+                });
+              },
+              icon: Icons.info,
+              iconColor: Colors.blue,
+              backgroundColor: Colors.white,
+                  /*.then((deletedFoodName) { // 나린 추가한 부분 - FoodDetailPage에서 삭제 시 삭제
                   if (deletedFoodName != null) {
                     setState(() {
                       // 삭제된 식품명을 기준으로 데이터 제거
@@ -700,7 +725,7 @@ class _FoodListPageState extends State<FoodListPage> {
               },
               icon: Icons.info,
               iconColor: Colors.blue,
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.white,*/
             ),
           ),
           // 오른쪽 버튼 (삭제)

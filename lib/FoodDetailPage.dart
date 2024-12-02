@@ -140,6 +140,14 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         widget.foodData['food_expiration_date'] = expirationDate;
         widget.foodData['food_expir_notif'] = isExpiryToggle;
         widget.foodData['food_unused_notif'] = isNotificationToggle;
+
+        // 유통기한을 yyyy년 MM월 dd일 형식으로 변경하여 화면에 반영
+        if (expirationDate != null) {
+          foodExpirationDate.text = DateFormat('yyyy년 MM월 dd일').format(expirationDate);
+        } else {
+          foodExpirationDate.text = '';
+        }
+
         isEditing = false; // 편집 모드 종료
       });
     } catch (e) {
@@ -274,8 +282,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment
-                                        .spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       isEditing
                                       ? Expanded(
@@ -318,6 +325,15 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                             setState(() {
                                               isEditing = true;
                                               // _updateFoodData(); // Firestore 업데이트 호출
+                                              // 유통기한을 yyyy-MM-dd 형식으로 변경
+                                              if (foodExpirationDate.text.isNotEmpty) {
+                                                try {
+                                                  DateTime expirationDate = DateFormat('yyyy년 MM월 dd일').parse(foodExpirationDate.text);
+                                                  foodExpirationDate.text = DateFormat('yyyy-MM-dd').format(expirationDate);
+                                                } catch (e) {
+                                                  print("Error parsing date format: $e");
+                                                }
+                                              }
                                             });
                                           },
                                           child: Row(
@@ -511,6 +527,18 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                                 // 이전 상태로 복원
                                                 foodName = originalFoodName; // 원래 식품 이름 복원
                                                 foodUnusedNotifPeriod = originalFoodUnusedNotifPeriod; // 원래 알림 설정 복원
+                                                /*foodExpirationDate.text = widget.foodData['food_expiration_date'] != null
+                                                    ? DateFormat('yyyy-MM-dd').format(DateTime.parse(widget.foodData['food_expiration_date']))
+                                                    : ''; // 유통기한 복원*/
+                                                // 유통기한 복원
+                                                if (widget.foodData['food_expiration_date'] != null) {
+                                                  DateTime originalExpirationDate = (widget.foodData['food_expiration_date'] is String)
+                                                      ? DateTime.parse(widget.foodData['food_expiration_date'])
+                                                      : widget.foodData['food_expiration_date'];
+                                                  foodExpirationDate.text = DateFormat('yyyy-MM-dd').format(originalExpirationDate);
+                                                } else {
+                                                  foodExpirationDate.text = '';
+                                                }
                                                 isEditing = false; // 편집 모드 종료
                                               });
                                             },
@@ -518,8 +546,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                               backgroundColor: Colors.white,
                                               foregroundColor: Color(0xFFA50534),
                                               shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(
-                                                    10),
+                                                borderRadius: BorderRadius.circular(10),
                                               ),
                                               elevation: 0,
                                             ),
@@ -540,13 +567,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                                         SizedBox(width: 10),
                                         Expanded(
                                           child: ElevatedButton(
-                                            /*onPressed: () {
-                                              setState(() {
-                                                isEditing = false;
-                                              });
-                                            },*/
                                             onPressed: () async {
-                                              _updateFoodData();
+                                              await _updateFoodData(); // Firestore 데이터 업데이트 수행
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Color(0xFFA50534),
