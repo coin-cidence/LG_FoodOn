@@ -129,6 +129,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         'food_expiration_date': expirationDate, // Firestore에는 DateTime으로 저장
         'food_expir_notif': isExpiryToggle,
         'food_unused_notif': isNotificationToggle,
+        'food_unused_notif_period': foodUnusedNotifPeriod,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -140,6 +141,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         widget.foodData['food_expiration_date'] = expirationDate;
         widget.foodData['food_expir_notif'] = isExpiryToggle;
         widget.foodData['food_unused_notif'] = isNotificationToggle;
+        widget.foodData['food_unused_notif_period'] = foodUnusedNotifPeriod;
 
         // 유통기한을 yyyy년 MM월 dd일 형식으로 변경하여 화면에 반영
         if (expirationDate != null) {

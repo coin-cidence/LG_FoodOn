@@ -173,9 +173,22 @@ class _FoodListPageState extends State<FoodListPage> {
         filteredData.sort((a, b) => a['food_register_date'].compareTo(b['food_register_date']));
         break;
       case "장기미사용식품":
+        final periodMapping = {
+          "1주일": 7,
+          "1개월": 30,
+          "2개월": 60,
+          "3개월": 90,
+          "6개월": 180,
+          "12개월": 365,
+        };
         filteredData = filteredData.where((food) {
           final daysSinceUpdate = DateTime.now().difference(food['food_weight_update_time']).inDays;
-          return daysSinceUpdate >= food['food_unused_notif_period'];
+
+          // food_unused_notif_period를 숫자로 변환
+          final periodString = food['food_unused_notif_period'];
+          final periodDays = periodMapping[periodString] ?? 0; // 알 수 없는 값이면 기본값 0
+
+          return daysSinceUpdate >= periodDays;
         }).toList();
         break;
     }
@@ -202,15 +215,28 @@ class _FoodListPageState extends State<FoodListPage> {
   Color _getCellColor(Map<String, dynamic> cellData) {
     if (cellData.isEmpty) return Colors.white;
 
+    // 매핑 테이블: 문자열을 일(day) 단위 숫자로 변환
+    final periodMapping = {
+      "1주일": 7,
+      "1개월": 30,
+      "2개월": 60,
+      "3개월": 90,
+      "6개월": 180,
+      "12개월": 365,
+    };
+
     final lastUpdatedTime = cellData['food_weight_update_time'];
     if (lastUpdatedTime == null || lastUpdatedTime is! DateTime) {
       return Colors.white;
     }
 
+    // food_unused_notif_period를 숫자로 변환
+    final periodString = cellData['food_unused_notif_period'];
+    final periodDays = periodMapping[periodString] ?? 0; // 문자열을 숫자로 매핑, 없으면 기본값 0
+
     final isUnused = DateTime.now()
         .difference(lastUpdatedTime)
-        .inDays >=
-        (cellData['food_unused_notif_period'] ?? 0);
+        .inDays >= periodDays;
 
     if (isUnused) return Color(0xFFF0D0FF); // 보라색
     if (cellData['food_weight'] != 0) return Color(0xFFB4E0FF); // 파란색

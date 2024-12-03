@@ -4,10 +4,11 @@ import 'deviceSelectionPage.dart';
 import 'MessagePage.dart';
 import 'widgets/my_custom_container.dart';
 import 'wasteProcessor/components/sliding_segment_control.dart';
-import 'dummy_data.dart';
+import 'wasteProcessor/screens/device/device.dart';
+// import 'dummy_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firestore_service.dart';
-import 'wasteProcessor/screens/device/device.dart';
+
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -45,13 +46,27 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     foodData.forEach((food) {
+      // 매핑 테이블: 문자열을 일(day) 단위 숫자로 변환
+      final periodMapping = {
+        "1주일": 7,
+        "1개월": 30,
+        "2개월": 60,
+        "3개월": 90,
+        "6개월": 180,
+        "12개월": 365,
+      };
+
       // 장기 미사용 알림
       if (food['foodWeight'] != 0 && food['unusedNotif'] == true) {
         final lastUpdatedTime = food['weightUpdateTime'] is DateTime
             ? food['weightUpdateTime']
             : (food['weightUpdateTime'] as Timestamp).toDate();
 
-        final notifTime = lastUpdatedTime.add(Duration(days: food['unusedNotifPeriod']));
+        // unusedNotifPeriod를 숫자로 변환
+        final periodString = food['unusedNotifPeriod'];
+        final periodDays = periodMapping[periodString] ?? 0; // 매핑되지 않은 값은 기본값 0
+
+        final notifTime = lastUpdatedTime.add(Duration(days: periodDays));
 
         if (DateTime.now().isAfter(notifTime) &&
             DateTime.now().difference(notifTime).inDays >= 0) {
