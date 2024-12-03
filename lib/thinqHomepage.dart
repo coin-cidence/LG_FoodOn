@@ -3,9 +3,11 @@ import 'package:intl/intl.dart';
 import 'deviceSelectionPage.dart';
 import 'MessagePage.dart';
 import 'widgets/my_custom_container.dart';
+import 'wasteProcessor/components/sliding_segment_control.dart';
 import 'dummy_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firestore_service.dart';
+import 'wasteProcessor/screens/device/device.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -602,6 +604,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => MyCustomContainer(),
+                                        ),
+                                      );
+                                    }
+                                    if (device["name"] == "음식물 처리기") {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => const DeviceOn(),
+                                            // selectedIndex: 0, // 초기 선택된 세그먼트 인덱스
+                                            // onValueChanged: (int? newIndex) {
+                                            //   if (newIndex != null) {
+                                            //     // 새 값이 선택되었을 때 처리
+                                            //     print("Selected segment index: $newIndex");
+                                            //   }
+                                            // },
+                                          // ),
                                         ),
                                       );
                                     }

@@ -339,7 +339,7 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                 border: Border.all(
                   color: Color(0xFF838383), // 테두리 색상 (검정)
                   width: 3, // 테두리 두께
-                // border: Border.all(width: 1), // 테두리
+                  // border: Border.all(width: 1), // 테두리
                 ),
                 borderRadius: BorderRadius.circular(8), // 둥근 모서리
               ),
