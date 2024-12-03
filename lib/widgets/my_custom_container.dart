@@ -138,7 +138,6 @@ class _MyCustomContainerState extends State<MyCustomContainer> {
                   padding: const EdgeInsets.only(top: 1.0),  // 버튼 간격을 아래로 조정
                   child: TextButton(
                     onPressed: () {
-                      onMove(); // 페이지 이동 함수 호출
                       Navigator.of(dialogContext).pop(); // 다이얼로그 닫기
                     },
                     child: Text(
