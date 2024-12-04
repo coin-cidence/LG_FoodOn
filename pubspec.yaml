@@ -11,7 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  intl: ^0.18.0 # 최신 버전
+  intl: ^0.20.1 # 최신 버전
   avatar_glow: ^2.0.2 # 최신 버전 확인 후 업데이트
 
 
@@ -20,6 +20,7 @@ dependencies:
   firebase_auth: ^5.3.1
   cloud_firestore: ^5.4.4
   flutter_slidable: ^3.1.1
+  google_fonts: ^4.0.4
 
   flutter_gradient_animation_text: ^1.0.2
 
@@ -37,6 +38,7 @@ flutter:
    - images/product_image/
    - images/
    - images/icons/
+   - images/newzen/
 
   fonts:
     - family: LGText

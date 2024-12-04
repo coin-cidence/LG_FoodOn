@@ -21,6 +21,7 @@ class _DeviceSelectionPageState extends State<DeviceSelectionPage>
     {'name': '슈케이스', 'image': 'images/product_image/슈케이스.png'},
     {'name': '식기세척기', 'image': 'images/product_image/식기세척기.png'},
     {'name': '푸디온', 'image': 'images/product_image/스마트선반.png'},
+    {'name': '음식물 처리기', 'image': 'images/product_image/음식물처리기.png'},
     {'name': '전자레인지', 'image': 'images/product_image/전자레인지.png'},
     {'name': '틔운', 'image': 'images/product_image/틔운.png'},
     {'name': '틔운미니', 'image': 'images/product_image/틔운미니.png'},
