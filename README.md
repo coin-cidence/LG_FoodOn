@@ -198,6 +198,11 @@ https://www.figma.com/board/Y9GgzYTVeu4n8wVslvkmQj/%EC%84%9C%EB%B9%84%EC%8A%A4-%
 
 #### ii. 안드로이드 앱 시연
 <p align="center">
+	
+
+https://github.com/user-attachments/assets/ea38d8db-beb3-4b92-b490-af07d604bb72
+
+
 </p>
 
 <br>
