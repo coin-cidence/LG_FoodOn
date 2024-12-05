@@ -95,19 +95,25 @@
 <br>
 
 ## 4. 개발 환경
-<p align="center">
 	
 ### 푸디온(하드웨어) 이미지 렌더링
-<img src="https://img.shields.io/badge/Rhino7-FFD700?style=for-the-badge&logo=Rhino&logoColor=black"/> <img src="https://img.shields.io/badge/KeyShot10-007ACC?style=for-the-badge&logo=Keyshot&logoColor=white"/>
+<p align="center">
+	<img src="https://img.shields.io/badge/Rhino7-FFD700?style=for-the-badge&logo=Rhino&logoColor=black"/> <img src="https://img.shields.io/badge/KeyShot10-007ACC?style=for-the-badge&logo=Keyshot&logoColor=white"/>
+</p>
 
 ### Front-End
-<img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=Flutter&logoColor=white"/> <img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=Dart&logoColor=white"/>
+<p align="center">
+	<img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=Flutter&logoColor=white"/> <img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=Dart&logoColor=white"/>
+</p>
 
 ### Back-End
-<img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=Firebase&logoColor=black"/> <img src="https://img.shields.io/badge/NoSQL-4EA94B?style=for-the-badge&logo=NoSQL&logoColor=white"/> <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=Flutter&logoColor=white"/>
+<p align="center">
+	<img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=Firebase&logoColor=black"/> <img src="https://img.shields.io/badge/NoSQL-4EA94B?style=for-the-badge&logo=NoSQL&logoColor=white"/> <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=Flutter&logoColor=white"/>
+</p>
 
 ### 협업툴
-<img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=Figma&logoColor=white"/> <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"/> <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white"/>
+<p align="center">
+	<img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=Figma&logoColor=white"/> <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"/> <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white"/>
 </p>
 <br>
 
@@ -228,9 +234,9 @@ https://www.figma.com/board/Y9GgzYTVeu4n8wVslvkmQj/%EC%84%9C%EB%B9%84%EC%8A%A4-%
 <br>
 
 #### ii. 안드로이드 앱 시연
-<p align="center">
-	https://github.com/user-attachments/assets/ea38d8db-beb3-4b92-b490-af07d604bb72
-</p>
+
+https://github.com/user-attachments/assets/ea38d8db-beb3-4b92-b490-af07d604bb72
+
 
 <br>
 
