@@ -95,7 +95,21 @@ https://docs.google.com/spreadsheets/d/1HO8h-Psc0BDuIP3_VJbJCITzMEcTdW9yRFJUZjVB
 <br>
 
 ## 7. 유스케이스
-<div style="display: flex; gap: 0px;">  <div style="flex: 1;">    <a href="https://github.com/user-attachments/assets/94a02bb4-3098-4a1f-ad85-8003c10fe8e0" target="_blank">      <img src="https://github.com/user-attachments/assets/94a02bb4-3098-4a1f-ad85-8003c10fe8e0" alt="영상1" style="width: 100%; border: none;">    </a>  </div>  <div style="flex: 1;">    <a href="https://github.com/user-attachments/assets/171f9b32-1402-48ee-92b6-287e277da045" target="_blank">      <img src="https://github.com/user-attachments/assets/171f9b32-1402-48ee-92b6-287e277da045" alt="영상2" style="width: 100%; border: none;">    </a>  </div></div>---
+<div style="display: flex; gap: 0px;">
+  <div style="flex: 1;">
+    <a href="https://github.com/user-attachments/assets/94a02bb4-3098-4a1f-ad85-8003c10fe8e0" target="_blank">
+      <img src="https://github.com/user-attachments/assets/94a02bb4-3098-4a1f-ad85-8003c10fe8e0" alt="영상1" style="width: 100%; border: none;">
+    </a>
+  </div>
+  <div style="flex: 1;">
+    <a href="https://github.com/user-attachments/assets/171f9b32-1402-48ee-92b6-287e277da045" target="_blank">
+      <img src="https://github.com/user-attachments/assets/171f9b32-1402-48ee-92b6-287e277da045" alt="영상2" style="width: 100%; border: none;">
+    </a>
+  </div>
+</div>
+
+<br>
+
 [스마트 선반 등록]
 1. 고객이 스마트 선반을 구입한다.
 2. 스마트 선반 아이콘을 클릭한다.
@@ -285,5 +299,5 @@ https://www.figma.com/board/Y9GgzYTVeu4n8wVslvkmQj/%EC%84%9C%EB%B9%84%EC%8A%A4-%
 모든 일이 그렇듯 목표에 비해 아쉬움이 남는 프로젝트지만, 어려운 주제였음에도 과감하게 도전해서 완성시킨 우리팀원들 너무 멋있다고 말하고싶습니다. 크롤링 시 기준을 확실하게 잡아야한다는 것, 소셜 데이터 전처리가 쉽지않다는 것, 화면을 구현하다보면 추가할 기능이 또 생긴다는 것을 배웠습니다.
 <br>
 
-### 김나린
+### 🪼김나린🪼
 짧은 시간 동안 기획부터 구현까지 진행해야 했던 정신없는 한 달이었습니다. 주제가 어렵고 도전적인 만큼 많은 한계에 부딪혔지만, 팀원들과 함께 끊임없이 고민하며 해결 방안을 찾아나가는 과정에서 많은 것을 배울 수 있었습니다. 특히, 아이디어를 빌드하고 실현해나가는 과정에서 명확한 커뮤니케이션의 중요성을 다시 한번 깨달았습니다. 이번 프로젝트를 통해 해보지 않았던 앱 구현까지 도전하며 새로운 기술과 경험을 쌓을 수 있었던 점이 정말 뜻깊었습니다. 혼자였다면 도저히 해낼 수 없었을 일을, 팀원들과 함께해서 완성할 수 있었다는 점이 무엇보다 소중하게 느껴집니다. 함께 고생한 조원들 모두 정말 고생 많으셨고, 덕분에 저도 한 단계 더 성장할 수 있었습니다. 팀원 모두 고맙고, 수고했습니다!
