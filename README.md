@@ -137,16 +137,18 @@ https://docs.google.com/spreadsheets/d/1HO8h-Psc0BDuIP3_VJbJCITzMEcTdW9yRFJUZjVB
 <br>
 
 ## 7. 유스케이스
-<div style="display: flex; gap: 0px;">
+<div style="display: flex; gap: 10px;">
   <div style="flex: 1;">
-    <a href="https://github.com/user-attachments/assets/94a02bb4-3098-4a1f-ad85-8003c10fe8e0" target="_blank">
-      <img src="https://github.com/user-attachments/assets/94a02bb4-3098-4a1f-ad85-8003c10fe8e0" alt="영상1" style="width: 100%; border: none;">
-    </a>
+    <video width="100%" controls>
+      <source src="https://github.com/user-attachments/assets/94a02bb4-3098-4a1f-ad85-8003c10fe8e0" type="video/mp4">
+      해당 브라우저는 동영상을 지원하지 않습니다.
+    </video>
   </div>
   <div style="flex: 1;">
-    <a href="https://github.com/user-attachments/assets/171f9b32-1402-48ee-92b6-287e277da045" target="_blank">
-      <img src="https://github.com/user-attachments/assets/171f9b32-1402-48ee-92b6-287e277da045" alt="영상2" style="width: 100%; border: none;">
-    </a>
+    <video width="100%" controls>
+      <source src="https://github.com/user-attachments/assets/171f9b32-1402-48ee-92b6-287e277da045" type="video/mp4">
+      해당 브라우저는 동영상을 지원하지 않습니다.
+    </video>
   </div>
 </div>
 
