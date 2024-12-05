@@ -1,4 +1,4 @@
-# 냉장고 고내 정리 서비스_푸디온
+# 냉장고 고내 관리 서비스_푸디온
 ![서비스이미지](https://github.com/user-attachments/assets/8f51e3d5-98d6-4293-8cc4-0392abb515c8)
 
 <br>
