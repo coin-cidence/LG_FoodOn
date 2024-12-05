@@ -17,7 +17,7 @@
 <br>
 
 ## 2. 팀원 구성 및 역할
-공통: 논리 구조 빌드, 웹크롤링 및 전처리, 서비스 앱 화면 구성, 설문 문항 논의
+공통: 논리 구조 빌드, 웹크롤링 및 전처리, 서비스 앱 화면 구성, 설문 문항 논의, 유스케이스 및 솔루션 구체화
 
 ### 도연우(팀장)
 - WBS 구조 설계
@@ -34,6 +34,7 @@
 <br>
 
 ### 이상현
+- 화면 설계 총괄
 - figma 앱 와이어프레임
 - flutter 화면 front-end
 - 기기 렌더링 화면 및 영상
@@ -43,7 +44,7 @@
 ### 장수진
 - 크롤링 전처리 총괄
 - flutter 화면 front-end
-- 요구사항 정의 및 서비스 흐름도
+- 기능 요구사항 및 서비스 흐름도
 
 <br>
 
@@ -51,6 +52,7 @@
 - 설문 폼 총괄
 - figma 앱 와이어프레임
 - flutter 화면 front-end
+- 기능 요구사항 및 빅데이터 분석 정의서
 
 <br>
 
@@ -159,6 +161,7 @@ https://www.figma.com/board/Y9GgzYTVeu4n8wVslvkmQj/%EC%84%9C%EB%B9%84%EC%8A%A4-%
 <br>
 
 ## 10. 앱 서비스 화면 구성
+![image](https://github.com/user-attachments/assets/f40f52e3-774b-4c93-bd47-03e25b855bf9)
 
 <br>
 
@@ -185,3 +188,37 @@ https://www.figma.com/board/Y9GgzYTVeu4n8wVslvkmQj/%EC%84%9C%EB%B9%84%EC%8A%A4-%
 <br>
 
 ## 13. 프로젝트 후기
+### 도연우(팀장)
+- WBS 구조 설계
+- DB 설계 및 firestore 연동
+- flutter back-end
+- 기획 발표, 시연 영상 녹화 및 발표
+
+<br>
+    
+### 문현지
+- flutter 화면 front-end
+- flutter back-end
+- 최종 발표
+<br>
+
+### 이상현
+- figma 앱 와이어프레임
+- flutter 화면 front-end
+- 기기 렌더링 화면 및 영상
+  
+<br>
+
+### 장수진
+- 크롤링 전처리 총괄
+- flutter 화면 front-end
+- 요구사항 정의 및 서비스 흐름도
+
+<br>
+
+### 김나린
+- 설문 폼 총괄
+- figma 앱 와이어프레임
+- flutter 화면 front-end
+
+<br>
