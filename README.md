@@ -84,7 +84,7 @@
 
 <br>
 
-## 4. 프로젝트 기간
+## 4. 프로젝트 WBS (2024-10-04 ~ 2024-12-05)
 https://docs.google.com/spreadsheets/d/1HO8h-Psc0BDuIP3_VJbJCITzMEcTdW9yRFJUZjVBzs8/edit?gid=0#gid=0
 ![image](https://github.com/user-attachments/assets/e265a4b1-ac54-4c5a-b5b1-93635bb9bfc0)
 
