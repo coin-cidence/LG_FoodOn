@@ -172,6 +172,15 @@ https://www.figma.com/board/Y9GgzYTVeu4n8wVslvkmQj/%EC%84%9C%EB%B9%84%EC%8A%A4-%
 
 ## 10. 앱 서비스 화면 구성
 
+![화면설계서1](https://github.com/user-attachments/assets/525fc541-309c-496f-b64c-db9e197ad626)
+![화면설계서2](https://github.com/user-attachments/assets/293c4d2c-b3c8-4054-bfc9-0d3c4df2fbbf)
+![화면설계서3](https://github.com/user-attachments/assets/1fd890af-e434-4a4a-bfad-d7de810ca387)
+![화면설계서4](https://github.com/user-attachments/assets/b4466035-4a05-46ce-876b-102ee2f4db4b)
+![화면설계서5](https://github.com/user-attachments/assets/aa41bf1e-6425-4950-ae3b-472b0d3bd91b)
+![화면설계서6](https://github.com/user-attachments/assets/a55f0cb7-b599-449e-b503-106e5a85b724)
+![화면설계서7](https://github.com/user-attachments/assets/d36e38bc-5cb6-4e88-a89f-9225d0a834eb)
+![화면설계서8](https://github.com/user-attachments/assets/9d399fd8-0b1a-4026-a0c5-56e5125ecc51)
+
 
 <br>
 
