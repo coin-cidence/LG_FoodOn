@@ -14,41 +14,62 @@
 
 ## 2. 팀원 구성 및 역할
 공통: 논리 구조 빌드, 웹크롤링 및 전처리, 서비스 앱 화면 구성, 설문 문항 논의, 유스케이스 및 솔루션 구체화
-
-### 도연우(팀장)
-- WBS 구조 설계
-- DB 설계 및 firestore 연동
-- flutter back-end
-- 기획 발표, 시연 영상 녹화 및 발표
-
-<br>
-    
-### 문현지
-- flutter 화면 front-end
-- flutter back-end
-- 최종 발표
-<br>
-
-### 이상현
-- 화면 설계 총괄
-- figma 앱 와이어프레임
-- flutter 화면 front-end
-- 기기 렌더링 화면 및 영상
-  
-<br>
-
-### 장수진
-- 크롤링 전처리 총괄
-- flutter 화면 front-end
-- 기능 요구사항 및 서비스 흐름도
-
-<br>
-
-### 김나린
-- 설문 폼 총괄
-- figma 앱 와이어프레임
-- flutter 화면 front-end
-- 기능 요구사항 및 빅데이터 분석 정의서
+<table>
+	<tr>
+		<a href="https://github.com/coin-cidence">😺도연우😺 <br>(팀장, 기획 및 일정관리, Back-End) </a> <br>
+		<a href="https://github.com/Moonhyunjiii">🐶문현지🐶 <br>(서비스 기획, Back-End, Front-end, git허브 관리) </a> <br>
+		<a href="https://github.com/alex230825">🚗이상현🚗 <br>(디자인 총괄, Front-end) </a> <br>
+		<a href="https://github.com/sujin0303-debug">🐯장수진🐯 <br>(프로젝트 기획, 서비스 기획, Front-end) </a> <br>
+		<a href="https://github.com/linaekim">🪼김나린🪼 <br>(프로젝트 기획, 서비스 기획, Front-end) </a> <br>
+	</tr>
+	<tr>
+		<td width="20%" height="220px" align="center">
+			<img src="./src/main/resources/static/assets/readme/" width="120px" alt="도연우사진">
+		</td>
+		<td width="20%" height="220px" align="center">
+			<img src="./src/main/resources/static/assets/readme/" width="120px" alt="문현지사진">
+		</td>
+		<td width="20%" height="220px" align="center">
+			<img src="./src/main/resources/static/assets/readme/" width="120px" alt="이상현사진">
+		</td>
+		<td width="20%" height="220px" align="center">
+			<img src="./src/main/resources/static/assets/readme/" width="120px" alt="장수진사진">
+		</td>
+		<td width="20%" height="220px" align="center">
+			<img src="./src/main/resources/static/assets/readme/" width="120px" alt="김나린사진">
+		</td>
+	</tr>
+	<tr>
+		<td width="20%" align="center">
+			- WBS 구조 설계<br>
+			- DB 설계 및 firestore 연동<br>
+			- flutter back-end<br>
+			- 기획 발표, 시연 영상 녹화 및 발표
+		</td>
+		<td width="20%" align="center">
+			- flutter 화면 front-end<br>
+			- flutter back-end<br>
+			- 최종 발표
+		</td>
+		<td width="20%" align="center">
+			- 화면 설계 총괄<br>
+			- figma 앱 와이어프레임<br>
+			- flutter 화면 front-end<br>
+			- 기기 렌더링 화면 및 영상
+		</td>
+		<td width="20%" align="center">
+			- 크롤링 전처리 총괄<br>
+			- flutter 화면 front-end<br>
+			- 기능 요구사항 및 서비스 흐름도
+		</td>
+		<td width="20%" align="center">
+			- 설문 폼 총괄<br>
+			- figma 앱 와이어프레임<br>
+			- flutter 화면 front-end<br>
+			- 기능 요구사항 및 빅데이터 분석 정의서
+		</td>
+	</tr>
+</table>
 
 <br>
 
