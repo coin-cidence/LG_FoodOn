@@ -43,7 +43,7 @@
 			<img src="./images/readme/상현_i.jpg" width="120px" alt="이상현사진">
 		</td>
 		<td width="20%" height="220px" align="center">
-			<img src="./images/readme/수진_i.jpg" width="120px" alt="장수진사진">
+			<img src="./images/readme/수진_i.png" width="120px" alt="장수진사진">
 		</td>
 		<td width="20%" height="220px" align="center">
 			<img src="./images/readme/나린_i.jpg" width="120px" alt="김나린사진">
