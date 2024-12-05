@@ -157,11 +157,11 @@ https://www.figma.com/board/Y9GgzYTVeu4n8wVslvkmQj/%EC%84%9C%EB%B9%84%EC%8A%A4-%
 <br>
 
 ## 9. ERD
-
+![image](https://github.com/user-attachments/assets/f40f52e3-774b-4c93-bd47-03e25b855bf9)
 <br>
 
 ## 10. 앱 서비스 화면 구성
-![image](https://github.com/user-attachments/assets/f40f52e3-774b-4c93-bd47-03e25b855bf9)
+
 
 <br>
 
