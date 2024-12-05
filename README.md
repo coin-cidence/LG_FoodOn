@@ -33,46 +33,46 @@
 		</td>
 	</tr>
 	<tr>
-		<td width="20%" height="220px" align="center">
+		<td width="20%" align="center">
 			<img src="./images/readme/연우_i.jpg" width="120px" alt="도연우사진">
 		</td>
-		<td width="20%" height="220px" align="center">
+		<td width="20%" align="center">
 			<img src="./images/readme/현지_i.jpg" width="120px" alt="문현지사진">
 		</td>
-		<td width="20%" height="220px" align="center">
+		<td width="20%" align="center">
 			<img src="./images/readme/상현_i.jpg" width="120px" alt="이상현사진">
 		</td>
-		<td width="20%" height="220px" align="center">
+		<td width="20%" align="center">
 			<img src="./images/readme/수진_i.png" width="120px" alt="장수진사진">
 		</td>
-		<td width="20%" height="220px" align="center">
+		<td width="20%" align="center">
 			<img src="./images/readme/나린_i.jpg" width="120px" alt="김나린사진">
 		</td>
 	</tr>
 	<tr>
-		<td width="20%" align="center">
+		<td width="20%" align="left">
 			- WBS 구조 설계<br>
 			- DB 설계 및 firestore 연동<br>
 			- flutter back-end<br>
 			- 기획 발표, 시연 영상 녹화 및 발표
 		</td>
-		<td width="20%" align="center">
+		<td width="20%" align="left">
 			- flutter 화면 front-end<br>
 			- flutter back-end<br>
 			- 최종 발표
 		</td>
-		<td width="20%" align="center">
+		<td width="20%" align="left">
 			- 화면 설계 총괄<br>
 			- figma 앱 와이어프레임<br>
 			- flutter 화면 front-end<br>
 			- 기기 렌더링 화면 및 영상
 		</td>
-		<td width="20%" align="center">
+		<td width="20%" align="left">
 			- 크롤링 전처리 총괄<br>
 			- flutter 화면 front-end<br>
 			- 기능 요구사항 및 서비스 흐름도
 		</td>
-		<td width="20%" align="center">
+		<td width="20%" align="left">
 			- 설문 폼 총괄<br>
 			- figma 앱 와이어프레임<br>
 			- flutter 화면 front-end<br>
