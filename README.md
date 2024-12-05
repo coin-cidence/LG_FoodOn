@@ -20,34 +20,17 @@
 <br>
 
 ## 1. 개발 환경
-- 하드웨어(푸디온 기기) 이미지 렌더링 
-    - Rhino7을 활용한 하드웨어 모델링 
-    - KeyShot10을 사용한 제품 렌더링 및 씬 연출
-      
+### 푸디온(하드웨어) 이미지 렌더링
+<img src="https://img.shields.io/badge/Rhino7-FFD700?style=for-the-badge&logo=Rhino&logoColor=black"/> <img src="https://img.shields.io/badge/KeyShot10-007ACC?style=for-the-badge&logo=Keyshot&logoColor=white"/>
 
-- 앱 구현 
-    - UI 디자인 툴 Figma를 이용한 앱 화면 디자인 
-    - Flutter Dart 언어 활용 Front-end 화면 구현
-      
-
-- 데이터베이스 생성 및 연동 
-    - Firebase의 Cloud Firestore(NoSQL) 활용 데이터 모델링 
-    - Cloud Functions 서버리스 함수로 백엔드 로직 구현 
-    - Flutter 앱 화면과 Firebase 연동
 ### Front
+<img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=Flutter&logoColor=white"/> <img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=Dart&logoColor=white"/>
 
-<!-- HTML5 -->
-<img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=HTML5&logoColor=white"/> <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=CSS3&logoColor=white"/> <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=black"/>
-
-### Back
-
-<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=Spring%20Boot&logoColor=white"/> <img src="https://img.shields.io/badge/JPA-59666C?style=for-the-badge&logo=Hibernate&logoColor=white"/><img src="https://img.shields.io/badge/Oracle-F80000?style=for-the-badge&logo=Oracle&logoColor=white"/>
+### Back-End
+<img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=Firebase&logoColor=black"/> <img src="https://img.shields.io/badge/NoSQL-4EA94B?style=for-the-badge&logo=NoSQL&logoColor=white"/> <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=Flutter&logoColor=white"/>
 
 ### 협업툴
-
-<!-- Figma -->
-<img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=Figma&logoColor=white"/> <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"/><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white"/>
-
+<img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=Figma&logoColor=white"/> <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"/> <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white"/>
 
 <br>
 
