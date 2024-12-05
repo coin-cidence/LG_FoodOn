@@ -65,6 +65,7 @@
 
 ## 4. 개발 환경
 <p align="center">
+	
 ### 푸디온(하드웨어) 이미지 렌더링
 <img src="https://img.shields.io/badge/Rhino7-FFD700?style=for-the-badge&logo=Rhino&logoColor=black"/> <img src="https://img.shields.io/badge/KeyShot10-007ACC?style=for-the-badge&logo=Keyshot&logoColor=white"/>
 
@@ -197,11 +198,6 @@ https://www.figma.com/board/Y9GgzYTVeu4n8wVslvkmQj/%EC%84%9C%EB%B9%84%EC%8A%A4-%
 
 #### ii. 안드로이드 앱 시연
 <p align="center">
-	
-
-Uploading 플러터 앱.mp4…
-
-
 </p>
 
 <br>
