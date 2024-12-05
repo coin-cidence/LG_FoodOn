@@ -22,11 +22,13 @@
 ## 1. 개발 환경
 - 하드웨어(푸디온 기기) 이미지 렌더링 
     - Rhino7을 활용한 하드웨어 모델링 
-    - KeyShot10을 사용한 제품 렌더링 및 씬 연출 
+    - KeyShot10을 사용한 제품 렌더링 및 씬 연출
+      
 
 - 앱 구현 
     - UI 디자인 툴 Figma를 이용한 앱 화면 디자인 
-    - Flutter Dart 언어 활용 Front-end 화면 구현 
+    - Flutter Dart 언어 활용 Front-end 화면 구현
+      
 
 - 데이터베이스 생성 및 연동 
     - Firebase의 Cloud Firestore(NoSQL) 활용 데이터 모델링 
@@ -39,7 +41,7 @@
 
 ## 2. 프로젝트 구조
 기기 이미지 렌더링(Rhino7, KeyShot10), 앱 화면 구현(Dart), DB 구축 및 앱 연동(Firebase), 개발자 협업 툴(Figma, GitHub, Notion)
-![서비스이미지](https://github.com/user-attachments/assets/21a7b17a-ceeb-4e87-ad85-e92434f8ee21)
+![시스템 아키텍처_ft ie-land](https://github.com/user-attachments/assets/8d217359-f6fe-46c2-9609-f62582d8ccf8)
 
 <br>
 
