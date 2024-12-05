@@ -34,19 +34,19 @@
 	</tr>
 	<tr>
 		<td width="20%" height="220px" align="center">
-			<img src="./src/main/resources/static/assets/readme/" width="120px" alt="도연우사진">
+			<img src="./images/readme/연우_i.jpg" width="120px" alt="도연우사진">
 		</td>
 		<td width="20%" height="220px" align="center">
-			<img src="./src/main/resources/static/assets/readme/" width="120px" alt="문현지사진">
+			<img src="./images/readme/현지_i.jpg" width="120px" alt="문현지사진">
 		</td>
 		<td width="20%" height="220px" align="center">
-			<img src="./src/main/resources/static/assets/readme/" width="120px" alt="이상현사진">
+			<img src="./images/readme/상현_i.jpg" width="120px" alt="이상현사진">
 		</td>
 		<td width="20%" height="220px" align="center">
-			<img src="./src/main/resources/static/assets/readme/" width="120px" alt="장수진사진">
+			<img src="./images/readme/수진_i.jpg" width="120px" alt="장수진사진">
 		</td>
 		<td width="20%" height="220px" align="center">
-			<img src="./src/main/resources/static/assets/readme/" width="120px" alt="김나린사진">
+			<img src="./images/readme/나린_i.jpg" width="120px" alt="김나린사진">
 		</td>
 	</tr>
 	<tr>
