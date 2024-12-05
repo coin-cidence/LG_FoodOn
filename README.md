@@ -16,20 +16,20 @@
 공통: 논리 구조 빌드, 웹크롤링 및 전처리, 서비스 앱 화면 구성, 설문 문항 논의, 유스케이스 및 솔루션 구체화
 <table>
 	<tr>
-		<td width="20%" height="220px" align="center">
-			<a href="https://github.com/coin-cidence">😺도연우😺 <br>(팀장, 기획 및 일정관리, Back-End) </a>
+		<td width="20%" align="center">
+			<a href="https://github.com/coin-cidence">😺도연우😺 <br>(팀장)</a>
 		</td>
-		<td width="20%" height="220px" align="center">
-			<a href="https://github.com/Moonhyunjiii">🐶문현지🐶 <br>(서비스 기획, Back-End, Front-end, git허브 관리) </a>
+		<td width="20%" align="center">
+			<a href="https://github.com/Moonhyunjiii">🐶문현지🐶 </a>
 		</td>
-		<td width="20%" height="220px" align="center">
-			<a href="https://github.com/alex230825">🚗이상현🚗 <br>(디자인 총괄, Front-end) </a> <br>
+		<td width="20%" align="center">
+			<a href="https://github.com/alex230825">🚗이상현🚗 </a> <br>
 		</td>
-		<td width="20%" height="220px" align="center">
-			<a href="https://github.com/sujin0303-debug">🐯장수진🐯 <br>(프로젝트 기획, 서비스 기획, Front-end) </a> <br>
+		<td width="20%" align="center">
+			<a href="https://github.com/sujin0303-debug">🐯장수진🐯 </a> <br>
 		</td>
-		<td width="20%" height="220px" align="center">
-			<a href="https://github.com/linaekim">🪼김나린🪼 <br>(프로젝트 기획, 서비스 기획, Front-end) </a> <br>
+		<td width="20%" align="center">
+			<a href="https://github.com/linaekim">🪼김나린🪼 </a> <br>
 		</td>
 	</tr>
 	<tr>
