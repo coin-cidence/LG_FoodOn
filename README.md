@@ -1,10 +1,6 @@
 # 냉장고 고내 정리 서비스_푸디온
 ![서비스이미지](https://github.com/user-attachments/assets/8f51e3d5-98d6-4293-8cc4-0392abb515c8)
 
-- 배포 URL : 
-- Test ID : 
-- Test PW : 
-
 <br>
 
 ## 1. 프로젝트 소개
@@ -68,6 +64,7 @@
 <br>
 
 ## 4. 개발 환경
+<p align="center">
 ### 푸디온(하드웨어) 이미지 렌더링
 <img src="https://img.shields.io/badge/Rhino7-FFD700?style=for-the-badge&logo=Rhino&logoColor=black"/> <img src="https://img.shields.io/badge/KeyShot10-007ACC?style=for-the-badge&logo=Keyshot&logoColor=white"/>
 
@@ -79,7 +76,7 @@
 
 ### 협업툴
 <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=Figma&logoColor=white"/> <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"/> <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white"/>
-
+</p>
 <br>
 
 ## 5. 프로젝트 구조
@@ -199,6 +196,13 @@ https://www.figma.com/board/Y9GgzYTVeu4n8wVslvkmQj/%EC%84%9C%EB%B9%84%EC%8A%A4-%
 <br>
 
 #### ii. 안드로이드 앱 시연
+<p align="center">
+	
+
+Uploading 플러터 앱.mp4…
+
+
+</p>
 
 <br>
 
