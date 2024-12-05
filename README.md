@@ -170,7 +170,7 @@ https://www.figma.com/board/Y9GgzYTVeu4n8wVslvkmQj/%EC%84%9C%EB%B9%84%EC%8A%A4-%
 
 ## 10. 앱 서비스 화면 구성
 
-#### 앱 화면 설계서
+#### i. 앱 화면 설계서
 
 ![화면설계서1](https://github.com/user-attachments/assets/525fc541-309c-496f-b64c-db9e197ad626)
 ![화면설계서2](https://github.com/user-attachments/assets/293c4d2c-b3c8-4054-bfc9-0d3c4df2fbbf)
@@ -187,20 +187,22 @@ https://www.figma.com/board/Y9GgzYTVeu4n8wVslvkmQj/%EC%84%9C%EB%B9%84%EC%8A%A4-%
 https://github.com/user-attachments/assets/324f621a-4dda-476b-a5bd-13a6b7521af5
 
 
-#### 프로젝트 사용 시나리오 (피그마 프로토타입)
+#### ii. 프로젝트 사용 시나리오 (피그마 프로토타입)
 
 1. 홈
-   -> 기기추가 (플러스버튼, 스마트 선반만 추가 가능)  
+   -> 기기 추가 (플러스버튼, 스마트 선반만 추가 가능)  
    -> 기기 온/오프 소개 (스마트 선반만 가능)  
    -> 알림 버튼 소개 (더미 데이터)  
    -> 스마트 선반 클릭 (식품이 등록되어 있다는 가정이므로 점등 화면 사용, 발표 자료의 시나리오와 다른 부분 있음)  
    -> 다른 선반 비어 있는 거 확인  
+<br>
 
 2. 메인 화면으로 이동 (KING)  
    -> 돋보기 기능 확인 (가지 검색 후 가지를 눌러서 다시 메인으로 이동)  
    -> 인포 기능 확인  
    -> 하이라이트 기능 확인  
    -> 정렬 순서 확인 후 다시 메인으로 (뒤로 가기가 아니라 다시 가나다순 선택)  
+<br>
 
 3. 메인 화면에서 가지 왼쪽으로 슬라이드  
    -> 세부 정보 확인  
@@ -209,6 +211,7 @@ https://github.com/user-attachments/assets/324f621a-4dda-476b-a5bd-13a6b7521af5
    -> 식품 삭제 클릭 (가지 삭제)  
    -> 삭제 확인 팝업에서 취소 가능, 하지만 일단 삭제 진행  
    -> 메인 화면으로 돌아가 가지 삭제 확인 가능  
+<br>
 
 4. 감을 왼쪽으로 슬라이드  
    -> (인포 버튼 기능 없음 주의)  
