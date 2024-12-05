@@ -189,7 +189,7 @@ https://www.figma.com/board/Y9GgzYTVeu4n8wVslvkmQj/%EC%84%9C%EB%B9%84%EC%8A%A4-%
 https://github.com/user-attachments/assets/324f621a-4dda-476b-a5bd-13a6b7521af5
 
 
-#### 프로젝트 사용 시나리오
+#### 프로젝트 사용 시나리오 (피그마 프로토타입)
 
 1. 홈
    -> 기기추가 (플러스버튼, 스마트 선반만 추가 가능)  
